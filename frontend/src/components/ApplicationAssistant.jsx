@@ -4,73 +4,63 @@ import { apiClient } from '../api';
 export default function ApplicationAssistant({ job, resumeText, onClose }) {
   const [loading, setLoading] = useState(true);
   const [aiData, setAiData] = useState(null);
+  const [copied, setCopied] = useState(null);
 
   useEffect(() => {
     const fetchAI = async () => {
       try {
-        const body = JSON.stringify({
-            resume_text: resumeText,
-            job_description: job.description
-        });
-
+        const body = { resume_text: resumeText, job_description: job.description };
         const [recData, coverData] = await Promise.all([
-          apiClient('/ai/recommendations', {
-            method: 'POST', headers: { 'Content-Type': 'application/json' }, body
-          }),
-          apiClient('/ai/cover-letter', {
-            method: 'POST', headers: { 'Content-Type': 'application/json' }, body
-          })
+          apiClient('/ai/recommendations', { method: 'POST', body }),
+          apiClient('/ai/cover-letter', { method: 'POST', body })
         ]);
-
-        setAiData({
-          recommendations: recData,
-          coverLetter: coverData
-        });
+        setAiData({ recommendations: recData, coverLetter: coverData });
       } catch (err) {
         console.error("AI error", err);
       } finally {
         setLoading(false);
       }
     };
-
     fetchAI();
   }, [job, resumeText]);
+
+  const copyToClipboard = (text, type) => {
+    navigator.clipboard.writeText(text);
+    setCopied(type);
+    setTimeout(() => setCopied(null), 2000);
+  };
 
   return (
     <div className="flex-center animate-fade-in" style={{
       position: 'fixed', top: 0, left: 0, right: 0, bottom: 0,
-      background: 'rgba(0,0,0,0.6)', backdropFilter: 'blur(8px)',
-      zIndex: 1000, padding: '2rem'
+      background: 'rgba(0,0,0,0.85)', backdropFilter: 'blur(10px)', zIndex: 2000, padding: '2rem'
     }}>
-      <div className="glass-panel" style={{ width: '100%', maxWidth: '850px', maxHeight: '90vh', overflowY: 'auto', padding: '2.5rem', position: 'relative' }}>
-        <button onClick={onClose} style={{ position: 'absolute', top: '1.5rem', right: '1.5rem', background: 'transparent', border: 'none', color: 'var(--text-secondary)', fontSize: '2rem', cursor: 'pointer', lineHeight: 1 }}>&times;</button>
+      <div className="glass-panel flex-col" style={{ width: '100%', maxWidth: '900px', maxHeight: '90vh', padding: '3rem', position: 'relative', overflowY: 'auto' }}>
+        <button onClick={onClose} style={{ position: 'absolute', top: '1.5rem', right: '2rem', background: 'transparent', border: 'none', color: 'var(--text-secondary)', fontSize: '2.5rem', cursor: 'pointer' }}>&times;</button>
         
         <div className="mb-4">
-            <h2 className="text-accent mb-1" style={{ fontSize: '2rem', fontWeight: 700 }}>AI Application Assistant</h2>
-            <h3 className="text-secondary" style={{ fontSize: '1.15rem', fontWeight: 400 }}>Role: <span style={{ color: 'var(--text-primary)', fontWeight: 600 }}>{job.title}</span> at {job.company}</h3>
+            <h2 className="text-accent" style={{ fontSize: '2.2rem', fontWeight: 800 }}>AI Apply Assist</h2>
+            <p className="text-secondary" style={{ fontSize: '1.1rem' }}>Strategy for <span style={{ color: 'var(--text-primary)', fontWeight: 600 }}>{job.title}</span> at {job.company}</p>
         </div>
 
         {loading ? (
-          <div className="flex-col flex-center text-center p-4 gap-3" style={{ minHeight: '300px' }}>
-            <span className="spinner" style={{ width: '48px', height: '48px', borderWidth: '4px' }}></span>
-            <div>
-                <p className="text-accent mb-1" style={{ fontSize: '1.25rem', fontWeight: 500 }}>Scanning Profile with AI...</p>
-                <p className="text-secondary" style={{ fontSize: '1.05rem' }}>Drafting the perfect cover letter and analyzing your fit.</p>
-            </div>
+          <div className="flex-col flex-center gap-2" style={{ minHeight: '400px' }}>
+            <div className="spinner" style={{ width: '50px', height: '50px', borderWidth: '5px' }}></div>
+            <p className="text-secondary">Generating tailored application materials...</p>
           </div>
         ) : aiData ? (
-          <div className="flex-col gap-4">
+          <div className="flex-col gap-3">
             
-            <div className="glass-panel p-3" style={{ borderLeft: '4px solid var(--success)', background: 'rgba(16, 185, 129, 0.05)' }}>
-              <h4 className="text-success mb-2" style={{ fontSize: '1.2rem', fontWeight: 600 }}>AI Recommendation</h4>
-              <p style={{ fontSize: '1rem', color: 'rgba(255,255,255,0.9)' }}>{aiData.recommendations.why_matches}</p>
+            <div className="glass-panel" style={{ padding: '1.5rem', borderLeft: '4px solid var(--success)', background: 'rgba(0, 230, 118, 0.03)' }}>
+              <h4 className="text-success mb-1" style={{ fontSize: '1.1rem' }}>Match Intelligence</h4>
+              <p style={{ fontSize: '1rem', lineHeight: 1.6 }}>{aiData.recommendations.why_matches}</p>
               
               {aiData.recommendations.skills_to_improve.length > 0 && (
                 <div className="mt-2 flex-col gap-1">
-                  <strong style={{ fontSize: '0.95rem' }}>Areas to improve: </strong>
-                  <div style={{ display: 'flex', gap: '0.4rem', flexWrap: 'wrap' }}>
+                  <strong style={{ fontSize: '0.9rem', color: 'var(--text-secondary)' }}>Skill Gap Suggestions:</strong>
+                  <div style={{ display: 'flex', gap: '0.5rem', flexWrap: 'wrap' }}>
                       {aiData.recommendations.skills_to_improve.map((skill, idx) => (
-                          <span key={idx} className="badge" style={{ background: 'rgba(255,255,255,0.1)', border: '1px solid rgba(255,255,255,0.2)' }}>{skill}</span>
+                          <span key={idx} className="badge" style={{ background: 'rgba(255,255,255,0.05)', color: 'var(--text-primary)' }}>{skill}</span>
                       ))}
                   </div>
                 </div>
@@ -78,29 +68,33 @@ export default function ApplicationAssistant({ job, resumeText, onClose }) {
             </div>
 
             <div className="flex-col gap-1">
-              <h4 style={{ fontSize: '1.15rem', fontWeight: 600 }}>Crafted Cover Letter</h4>
-              <textarea 
-                className="input-field" 
-                readOnly 
-                value={aiData.coverLetter.cover_letter}
-                style={{ minHeight: '250px', resize: 'vertical', background: 'rgba(0,0,0,0.3)', border: '1px solid rgba(255,255,255,0.1)' }}
-              />
+              <div className="flex-between">
+                <h4 className="text-secondary" style={{ fontSize: '0.9rem', textTransform: 'uppercase' }}>Tailored Cover Letter</h4>
+                <button onClick={() => copyToClipboard(aiData.coverLetter.cover_letter, 'cv')} className="btn-secondary" style={{ padding: '0.3rem 0.8rem', fontSize: '0.75rem' }}>
+                  {copied === 'cv' ? 'Copied! ✓' : 'Copy Content'}
+                </button>
+              </div>
+              <div className="glass-panel" style={{ padding: '1.5rem', fontSize: '0.95rem', lineHeight: 1.7, maxHeight: '300px', overflowY: 'auto', background: 'rgba(0,0,0,0.2)' }}>
+                {aiData.coverLetter.cover_letter.split('\n').map((line, i) => <p key={i} className={line ? 'mb-2' : 'mb-1'} style={{ marginBottom: line ? '1rem' : '0.5rem' }}>{line}</p>)}
+              </div>
             </div>
 
             <div className="flex-col gap-1">
-              <h4 style={{ fontSize: '1.15rem', fontWeight: 600 }}>Recruiter Email Template</h4>
-              <textarea 
-                className="input-field" 
-                readOnly 
-                value={aiData.coverLetter.email_template}
-                style={{ minHeight: '150px', resize: 'vertical', background: 'rgba(0,0,0,0.3)', border: '1px solid rgba(255,255,255,0.1)' }}
-              />
+              <div className="flex-between">
+                <h4 className="text-secondary" style={{ fontSize: '0.9rem', textTransform: 'uppercase' }}>Recruiter Email</h4>
+                <button onClick={() => copyToClipboard(aiData.coverLetter.email_template, 'email')} className="btn-secondary" style={{ padding: '0.3rem 0.8rem', fontSize: '0.75rem' }}>
+                  {copied === 'email' ? 'Copied! ✓' : 'Copy Content'}
+                </button>
+              </div>
+              <pre style={{ padding: '1.5rem', borderRadius: 'var(--radius-md)', background: 'rgba(0,0,0,0.3)', border: '1px solid var(--glass-border)', whiteSpace: 'pre-wrap', fontSize: '0.9rem', color: 'var(--text-primary)' }}>
+                {aiData.coverLetter.email_template}
+              </pre>
             </div>
 
           </div>
         ) : (
-          <div className="p-4 text-center glass-panel">
-            <p className="text-danger flex-center gap-2"><span style={{ fontSize: '1.5rem' }}>⚠️</span> Failed to load AI insight data.</p>
+          <div className="glass-panel text-center" style={{ padding: '4rem' }}>
+            <p className="text-danger">Failed to connect with AI services.</p>
           </div>
         )}
       </div>

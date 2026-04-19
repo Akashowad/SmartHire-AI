@@ -1,24 +1,31 @@
+import logging
 from fastapi import APIRouter, HTTPException
 from app.models.schemas import CoverLetterRequest, CoverLetterResponse, RecommendationResponse
-from app.services.openai_service import generate_cover_letter_service, generate_recommendations_service
-import logging
+from app.services.ai_service import generate_cover_letter_service, generate_recommendations_service
 
 logger = logging.getLogger(__name__)
-
 router = APIRouter()
 
 @router.post("/cover-letter", response_model=CoverLetterResponse)
-async def generate_cover_letter(request: CoverLetterRequest):
+async def get_cover_letter(request: CoverLetterRequest):
+    """Generates an AI-powered cover letter and email template."""
     try:
-        return await generate_cover_letter_service(request.resume_text, request.job_description)
+        return await generate_cover_letter_service(
+            resume_text=request.resume_text,
+            job_description=request.job_description
+        )
     except Exception as e:
-        logger.error(f"Failed to generate cover letter: {str(e)}")
-        raise HTTPException(status_code=500, detail="An error occurred while generating the cover letter.")
+        logger.error(f"AI Cover Letter Error: {e}")
+        raise HTTPException(status_code=500, detail="Failed to generate AI content.")
 
 @router.post("/recommendations", response_model=RecommendationResponse)
-async def generate_recommendations(request: CoverLetterRequest):
+async def get_recommendations(request: CoverLetterRequest):
+    """Provides AI-driven insights and skill suggestions."""
     try:
-        return await generate_recommendations_service(request.resume_text, request.job_description)
+        return await generate_recommendations_service(
+            resume_text=request.resume_text,
+            job_description=request.job_description
+        )
     except Exception as e:
-        logger.error(f"Failed to generate recommendations: {str(e)}")
-        raise HTTPException(status_code=500, detail="An error occurred while analyzing the job match.")
+        logger.error(f"AI Recommendations Error: {e}")
+        raise HTTPException(status_code=500, detail="Failed to generate AI insights.")
