@@ -1,5 +1,7 @@
 import pdfplumber
+import docx
 import spacy
+import io
 from typing import Dict, List
 
 # Load the spaCy model for Named Entity Recognition
@@ -21,7 +23,6 @@ COMMON_SKILLS = [
 
 def extract_text_from_pdf(file_bytes: bytes) -> str:
     """Takes PDF bytes and extracts text."""
-    import io
     text = ""
     with pdfplumber.open(io.BytesIO(file_bytes)) as pdf:
         for page in pdf.pages:
@@ -29,6 +30,26 @@ def extract_text_from_pdf(file_bytes: bytes) -> str:
             if selected_text:
                 text += selected_text + "\n"
     return text
+
+
+def extract_text_from_docx(file_bytes: bytes) -> str:
+    """Takes DOCX bytes and extracts text from paragraphs and tables."""
+    document = docx.Document(io.BytesIO(file_bytes))
+    text_parts = []
+
+    # Extract text from paragraphs
+    for paragraph in document.paragraphs:
+        if paragraph.text.strip():
+            text_parts.append(paragraph.text)
+
+    # Extract text from tables
+    for table in document.tables:
+        for row in table.rows:
+            row_text = [cell.text.strip() for cell in row.cells if cell.text.strip()]
+            if row_text:
+                text_parts.append(" | ".join(row_text))
+
+    return "\n".join(text_parts)
 
 def parse_resume(text: str) -> Dict:
     """Parses text to find skills, education, and experience."""

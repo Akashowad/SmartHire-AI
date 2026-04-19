@@ -2,6 +2,7 @@ from fastapi import APIRouter, HTTPException
 from typing import List
 from app.models.schemas import MatchSchema
 from app.services.matching_engine import calculate_match, extract_missing_skills
+from app.services.job_fetcher import fetch_recent_jobs
 from app.utils.database import db
 import uuid
 
@@ -25,11 +26,11 @@ async def create_match(resume_id: str, job_id: str):
            "user_id": "user_mock"
         }
         
-    # Fetch the job
-    from app.services.job_fetcher import MOCK_JOBS
-    job = next((j for j in MOCK_JOBS if j["id"] == job_id), None)
+    # Fetch the job from the real API cached results
+    all_jobs = fetch_recent_jobs()
+    job = next((j for j in all_jobs if str(j["id"]) == str(job_id)), None)
     if not job:
-        raise HTTPException(status_code=404, detail="Job not found")
+        raise HTTPException(status_code=404, detail="Job not found. It may have expired from the live listings.")
 
     match_percentage = calculate_match(resume["text_content"], job["description"])
     matching, missing = extract_missing_skills(resume["extracted_skills"], job["skills_required"])

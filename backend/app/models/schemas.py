@@ -7,10 +7,15 @@ class JobSchema(BaseModel):
     id: str
     title: str
     company: str
+    company_logo: Optional[str] = ""
     description: str
+    excerpt: Optional[str] = ""
     location: str
     posting_date: str
     skills_required: List[str]
+    apply_url: Optional[str] = ""
+    category: Optional[str] = ""
+    salary: Optional[str] = ""
 
 class ResumeSchema(BaseModel):
     id: Optional[str] = None
@@ -41,3 +46,18 @@ class CoverLetterResponse(BaseModel):
 class RecommendationResponse(BaseModel):
     why_matches: str
     skills_to_improve: List[str]
+
+class ApplicationSchema(BaseModel):
+    id: Optional[str] = None
+    user_id: str
+    job_id: str
+    resume_id: str
+    applied_at: datetime
+    status: str = "Applied"
+    cover_letter: str
+    job_title: str
+    company_name: str
+
+class ApplicationResponse(BaseModel):
+    application: ApplicationSchema
+    message: str

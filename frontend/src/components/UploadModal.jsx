@@ -77,7 +77,7 @@ export default function UploadModal({ onUploadSuccess }) {
           <div className="flex-col flex-center gap-2">
             <span style={{ fontSize: '3rem', opacity: 0.8 }}>📁</span>
             <p className="text-secondary" style={{ fontSize: '1.1rem' }}>
-              Drag and drop your PDF here, or click to browse
+              Drag and drop your PDF or Word file here, or click to browse
             </p>
             <button className="btn">Select File</button>
           </div>
@@ -86,7 +86,7 @@ export default function UploadModal({ onUploadSuccess }) {
           type="file" 
           ref={inputRef} 
           style={{ display: 'none' }} 
-          accept="application/pdf"
+          accept="application/pdf,.pdf,application/vnd.openxmlformats-officedocument.wordprocessingml.document,.docx,application/msword,.doc"
           onChange={handleChange}
         />
       </div>

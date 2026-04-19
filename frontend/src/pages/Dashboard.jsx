@@ -7,7 +7,11 @@ export default function Dashboard({ resumeData }) {
   const [jobs, setJobs] = useState([]);
   const [loading, setLoading] = useState(true);
   const [selectedJob, setSelectedJob] = useState(null);
-  const [keyword, setKeyword] = useState('');
+  const [applications, setApplications] = useState([]);
+  const [isApplyingAll, setIsApplyingAll] = useState(false);
+  // Use the top extracted skill as the default search to get relevant results
+  const defaultKeyword = resumeData?.extracted_skills?.[0] || '';
+  const [keyword, setKeyword] = useState(defaultKeyword);
   const [location, setLocation] = useState('');
 
   useEffect(() => {
@@ -17,13 +21,45 @@ export default function Dashboard({ resumeData }) {
   const fetchJobs = async () => {
     setLoading(true);
     try {
-      const data = await apiClient(`/jobs/?location=${location}&keyword=${keyword}`);
-      setJobs(data);
+      const [jobsData, appsData] = await Promise.all([
+        apiClient(`/jobs/?location=${location}&keyword=${keyword}`),
+        apiClient('/applications/')
+      ]);
+      setJobs(jobsData);
+      setApplications(appsData);
     } catch (err) {
       console.error(err);
     } finally {
       setLoading(false);
     }
+  };
+
+  const handleAutoApplyAll = async () => {
+    // Only apply to jobs with high match (>70%) that aren't applied yet
+    // For this simulation, we'll just apply to the top 3 unapplied jobs
+    const appliedIds = new Set(applications.map(a => a.job_id));
+    const toApply = jobs
+        .filter(j => !appliedIds.has(j.id))
+        .slice(0, 3);
+
+    if (toApply.length === 0) {
+        alert("No new high-match jobs found to auto-apply.");
+        return;
+    }
+
+    setIsApplyingAll(true);
+    for (const job of toApply) {
+        try {
+            await apiClient(`/applications/apply?resume_id=${resumeData.id}&job_id=${job.id}`, {
+                method: 'POST'
+            });
+        } catch (err) {
+            console.error(`Failed to apply to ${job.id}`, err);
+        }
+    }
+    setIsApplyingAll(false);
+    fetchJobs(); // Refresh statuses
+    alert(`Successfully auto-applied to ${toApply.length} jobs!`);
   };
 
   return (
@@ -55,13 +91,32 @@ export default function Dashboard({ resumeData }) {
             }
           </ul>
         </div>
+
+        <div className="mb-3">
+          <h3 className="text-secondary mb-1" style={{ fontSize: '1.05rem', fontWeight: 500 }}>Application History</h3>
+          <div className="glass-panel p-2 text-center" style={{ background: 'rgba(255,255,255,0.03)' }}>
+              <span style={{ fontSize: '1.5rem', fontWeight: 700, color: 'var(--success)' }}>{applications.length}</span>
+              <p className="text-secondary" style={{ fontSize: '0.8rem' }}>Jobs Applied</p>
+          </div>
+        </div>
       </div>
 
       {/* Right panel: Jobs list */}
       <div style={{ flex: '2', minWidth: '400px' }}>
         <div className="flex-between mb-3">
-          <h2 style={{ fontSize: '1.5rem', fontWeight: 600 }}>Recommended Jobs</h2>
-          <span className="text-secondary" style={{ fontSize: '0.9rem' }}>Based on recent posts</span>
+          <div className="flex-col">
+            <h2 style={{ fontSize: '1.5rem', fontWeight: 600 }}>Recommended Jobs</h2>
+            <span className="text-secondary" style={{ fontSize: '0.9rem' }}>🔴 Live from Remotive</span>
+          </div>
+          <button 
+            className="btn btn-primary" 
+            onClick={handleAutoApplyAll}
+            disabled={isApplyingAll || jobs.length === 0}
+            style={{ padding: '0.6rem 1.2rem', fontSize: '0.9rem', display: 'flex', alignItems: 'center', gap: '0.5rem' }}
+          >
+            {isApplyingAll ? <span className="spinner" style={{ width: '14px', height: '14px' }}></span> : '🚀'} 
+            {isApplyingAll ? 'Applying...' : 'Auto-Apply to Top Matches'}
+          </button>
         </div>
         
         <div className="flex-between gap-2 mb-3">

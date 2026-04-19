@@ -1,19 +1,34 @@
 from fastapi import APIRouter, File, UploadFile, HTTPException
-from app.services.resume_parser import extract_text_from_pdf, parse_resume
+from app.services.resume_parser import extract_text_from_pdf, extract_text_from_docx, parse_resume
 from app.models.schemas import ResumeSchema
 from app.utils.database import db
 import uuid
 
 router = APIRouter()
 
+ALLOWED_TYPES = {
+    "application/pdf": "pdf",
+    "application/vnd.openxmlformats-officedocument.wordprocessingml.document": "docx",
+    "application/msword": "doc",
+}
+
 @router.post("/upload-resume", response_model=ResumeSchema)
 async def upload_resume(file: UploadFile = File(...)):
-    if file.content_type != "application/pdf":
-        raise HTTPException(status_code=400, detail="Only PDF files are supported.")
+    file_type = ALLOWED_TYPES.get(file.content_type)
+    if file_type is None:
+        raise HTTPException(
+            status_code=400,
+            detail="Only PDF and Word (.docx) files are supported."
+        )
         
     try:
         contents = await file.read()
-        text = extract_text_from_pdf(contents)
+
+        if file_type == "pdf":
+            text = extract_text_from_pdf(contents)
+        else:
+            text = extract_text_from_docx(contents)
+
         parsed_data = parse_resume(text)
         
         resume = ResumeSchema(

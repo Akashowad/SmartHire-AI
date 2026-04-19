@@ -1,68 +1,64 @@
-# SmartHire AI
+# SmartHire AI 🚀
 
-An AI Job Assistant that analyzes your resume, fetches dynamic mock job listings, and helps you apply with AI-generated feedback and cover letters.
+An AI-powered Job Assistant Agent that connects your career profile to the real world. SmartHire AI analyzes your resume (PDF/Word), matches you against **real live job listings**, and automates the application process using cutting-edge AI.
 
-## Features
-- **Resume Upload & Parsing**: Drop a PDF. It reads the text and extracts skills using spaCy NLP.
-- **Job Fetching System**: Includes a mock API that simulates Adzuna by providing tech job entries.
-- **Matching Engine**: Leverages scikit-learn's TF-IDF to calculate cosine similarity percentage.
-- **AI Recommendation Module**: OpenAI integration to review your match and suggest skills to improve.
-- **Application Assistant**: Automatic personalized cover letter and recruiter email generation.
-- **Modern UI**: An aesthetic glassmorphism Dark Mode React portal.
+## 🌟 Key Features
+- **Smart Resume Parsing**: Support for **PDF and Word (.docx)** uploads. Extracts skills and experience using spaCy NLP.
+- **Real-Time Job Integration**: Integrated with the **Remotive API** to fetch 100% real, live remote job listings from top companies worldwide.
+- **AI Matching Engine**: Uses scikit-learn's TF-IDF and Cosine Similarity to calculate a precise match percentage between your profile and live job descriptions.
+- **AI Auto-Apply**: One-click "Auto-Apply" feature that uses OpenAI to generate tailored cover letters and recruiter outreach emails for specific roles.
+- **Batch Application**: "Auto-Apply to Top Matches" functionality to process multiple high-fit opportunities simultaneously.
+- **Premium UI/UX**: High-end glassmorphism design with dark mode, smooth transitions, and real-time AI progress animations.
 
-## Tech Stack
-- **Backend:** FastAPI, MongoDB (Motor), spaCy, scikit-learn, OpenAI API.
-- **Frontend:** React, Vite, Vanilla CSS.
+## 🛠️ Tech Stack
+- **Backend:** FastAPI, MongoDB (Motor), spaCy, scikit-learn, OpenAI API, python-docx, pdfplumber.
+- **Frontend:** React, Vite, CSS3 (Glassmorphism), Lucide/Emoji-based iconography.
 
-## Requirements
+## 📋 Requirements
 - Python 3.10+
 - Node.js 18+
-- MongoDB
+- MongoDB (Running locally or via Docker)
+- OpenAI API Key (For AI features)
 
-## Setup Instructions
+## 🚀 Setup Instructions
 
 ### 1. Environment Variables
-Create a file named `.env` in the `backend/` directory:
-```
+Create a `.env` file in the `backend/` directory:
+```env
 MONGO_URI=mongodb://localhost:27017
 DB_NAME=smarthire
-OPENAI_API_KEY=your_openai_api_key_here
+OPENAI_API_KEY=sk-...
 ```
 
 ### 2. Backend Setup
-1. Open a terminal in the root directory.
-2. Create and activate a Virtual Environment:
 ```bash
-python -m venv venv
-# Windows:
-.\venv\Scripts\activate
-# Mac/Linux:
-source venv/bin/activate
-```
-3. Install dependencies:
-```bash
+# Navigate to backend
+cd backend
+
+# Install dependencies
 pip install -r requirements.txt
+pip install python-docx pdfplumber httpx
+
+# Download NLP model
 python -m spacy download en_core_web_sm
+
+# Start the server
+uvicorn app.main:app --reload --port 8000
 ```
-4. Run the server:
-```bash
-uvicorn backend.app.main:app --reload
-```
-The API runs at http://localhost:8000. Interactive Docs at http://localhost:8000/docs.
+*Interactive API documentation available at `http://localhost:8000/docs`*
 
 ### 3. Frontend Setup
-1. Open another terminal in the `frontend/` directory.
-2. Install packages:
 ```bash
+# Navigate to frontend
+cd frontend
+
+# Install & Run
 npm install
-```
-3. Run the development environment:
-```bash
 npm run dev
 ```
+*Access the portal at `http://localhost:5173/`*
 
-### Docker (Optional)
-A `docker-compose.yml` is provided to spin up MongoDB alongside the app instances.
+## 🐳 Docker Deployment
 ```bash
 docker-compose up --build
 ```
