@@ -10,11 +10,22 @@ export const AppProvider = ({ children }) => {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
 
-
   useEffect(() => {
     const savedResume = localStorage.getItem('smarthire_resume');
     if (savedResume) {
-      setResumeData(JSON.parse(savedResume));
+      try {
+        setResumeData(JSON.parse(savedResume));
+      } catch (e) {
+        localStorage.removeItem('smarthire_resume');
+      }
+    }
+    const savedApps = localStorage.getItem('smarthire_applications');
+    if (savedApps) {
+      try {
+        setApplications(JSON.parse(savedApps));
+      } catch (e) {
+        localStorage.removeItem('smarthire_applications');
+      }
     }
   }, []);
 
@@ -32,7 +43,7 @@ export const AppProvider = ({ children }) => {
     setLoading(true);
     setError(null);
     try {
-      const data = await apiClient(`/jobs/?keyword=${keyword}&location=${location}`);
+      const data = await apiClient(`/jobs/?keyword=${encodeURIComponent(keyword)}&location=${encodeURIComponent(location)}`);
       setJobs(data);
     } catch (err) {
       setError('Failed to fetch jobs. Please try again.');
@@ -81,3 +92,4 @@ export const useApp = () => {
   }
   return context;
 };
+

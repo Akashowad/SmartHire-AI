@@ -16,6 +16,9 @@ class JobSchema(BaseModel):
     apply_url: Optional[str] = ""
     category: Optional[str] = ""
     salary: Optional[str] = ""
+    source: Optional[str] = ""
+    source_region: Optional[str] = ""
+    job_type: Optional[str] = ""
 
 class ResumeSchema(BaseModel):
     id: Optional[str] = None
