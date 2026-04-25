@@ -3,18 +3,18 @@ import { Users, Target, Shield, Lightbulb } from "lucide-react";
 
 export default function About(){
   const values=[
-    {icon:<Target size={24}/>,title:"Precision",desc:"Data-driven decisions with rigorous AI analysis."},
-    {icon:<Shield size={24}/>,title:"Trust",desc:"Enterprise security and transparency in every algorithm."},
-    {icon:<Users size={24}/>,title:"People First",desc:"Technology amplifies human potential."},
-    {icon:<Lightbulb size={24}/>,title:"Innovation",desc:"Pushing boundaries of AI in recruitment."}
+    {icon:<Target size={24}/>,title:"Precision",desc:"Measure what matters and act on it."},
+    {icon:<Shield size={24}/>,title:"Trust",desc:"Security and transparency in everything we build."},
+    {icon:<Users size={24}/>,title:"People First",desc:"Tools should help people, not replace them."},
+    {icon:<Lightbulb size={24}/>,title:"Innovation",desc:"Always looking for better ways to hire."}
   ];
-  const stats=[{v:"2019",l:"Founded"},{v:"50+",l:"Clients"},{v:"2M+",l:"Resumes"},{v:"99.9%",l:"Uptime"}];
+  const stats=[{v:"2021",l:"Started"},{v:"12",l:"Teams Using It"},{v:"40k+",l:"Resumes Parsed"},{v:"3",l:"Engineers"}];
   return <div className="animate-fade-in">
     <section style={{padding:"4rem 0",background:"linear-gradient(180deg,var(--primary-50) 0%,#fff 100%)"}}>
       <div className="container" style={{maxWidth:"720px"}}>
         <h1 style={{fontSize:"2.5rem",marginBottom:"1rem"}}>About SmartHire AI</h1>
-        <p style={{fontSize:"1.1rem",color:"var(--text-muted)",lineHeight:1.7,marginBottom:"1.5rem"}}>We are building the future of talent acquisition. Founded by AI researchers and former recruiting leaders, SmartHire combines cutting-edge ML with deep industry expertise.</p>
-        <p style={{fontSize:"1.1rem",color:"var(--text-muted)",lineHeight:1.7}}>Our mission: eliminate bias, reduce time-to-hire, and help every company build their dream team.</p>
+        <p style={{fontSize:"1.1rem",color:"var(--text-muted)",lineHeight:1.7,marginBottom:"1.5rem"}}>SmartHire started as a tool to solve our own recruiting headaches. We were spending too much time reading resumes and not enough time talking to good candidates. So we built something to fix that.</p>
+        <p style={{fontSize:"1.1rem",color:"var(--text-muted)",lineHeight:1.7}}>The goal is simple: get the right people in front of the right hiring managers faster, with less manual work.</p>
       </div>
     </section>
     <section style={{padding:"3rem 0",background:"var(--primary-900)",color:"#fff"}}>

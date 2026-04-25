@@ -7,7 +7,7 @@ export default function Home(){
     <section style={{padding:"5rem 0",background:"linear-gradient(135deg,var(--primary-50) 0%,#f1f5f9 100%)"}}>
       <div className="container flex-between" style={{gap:"3rem",flexWrap:"wrap"}}>
         <div style={{flex:1,minWidth:"320px"}}>
-          <div className="badge badge-muted mb-3"><Zap size={12}/> AI-Powered Recruitment</div>
+          <div className="badge badge-muted mb-3"><Zap size={12}/> Smart Matching</div>
           <h1 style={{fontSize:"clamp(2.5rem,5vw,3.5rem)",fontWeight:800,lineHeight:1.1,marginBottom:"1.25rem"}}>Hire smarter. <span style={{color:"var(--accent-600)"}}>Scale faster.</span></h1>
           <p style={{fontSize:"1.15rem",color:"var(--text-muted)",lineHeight:1.7,marginBottom:"2rem",maxWidth:"520px"}}>Enterprise AI recruitment platform that matches top talent with your open roles — reducing time-to-hire by up to 70%.</p>
           <div className="flex flex-wrap gap-3">
@@ -43,7 +43,7 @@ export default function Home(){
       <div className="container text-center">
         <p style={{fontSize:"0.75rem",color:"var(--text-muted)",textTransform:"uppercase",letterSpacing:"0.1em",fontWeight:600,marginBottom:"1.25rem"}}>Trusted by leading companies</p>
         <div className="flex-center flex-wrap" style={{gap:"2.5rem",opacity:0.5}}>
-          {["Stripe","Shopify","Notion","Figma","Vercel","Linear"].map(n=><span key={n} style={{fontWeight:800,fontSize:"1.1rem",color:"var(--primary-500)",fontFamily:"var(--font-display)"}}>{n}</span>)}
+          {["TechCorp","NextGen","CloudScale","DataFlow","BuildFast","AppWorks"].map(n=><span key={n} style={{fontWeight:800,fontSize:"1.1rem",color:"var(--primary-500)",fontFamily:"var(--font-display)"}}>{n}</span>)}
         </div>
       </div>
     </section>
@@ -55,7 +55,7 @@ export default function Home(){
           <p style={{color:"var(--text-muted)",fontSize:"1rem"}}>From sourcing to offer, automate the repetitive work so recruiters focus on relationships.</p>
         </div>
         <div style={{display:"grid",gridTemplateColumns:"repeat(auto-fit,minmax(280px,1fr))",gap:"1.25rem"}}>
-          {[{i:<Zap size={22} style={{color:"var(--accent-600)"}}/>,t:"AI-Powered Matching",d:"Hybrid SBERT + TF-IDF engine delivers precise compatibility scores in milliseconds."},{i:<FileText size={22} style={{color:"var(--info-500)"}}/>,t:"Resume Parsing",d:"Extract skills, education, and experience from PDF and DOCX automatically."},{i:<BarChart3 size={22} style={{color:"var(--warning-500)"}}/>,t:"Analytics",d:"Track match scores, pipelines, hiring velocity, and team performance."},{i:<Shield size={22} style={{color:"var(--danger-500)"}}/>,t:"Enterprise Security",d:"JWT auth, bcrypt hashing, and RBAC built-in for compliance."},{i:<Globe size={22} style={{color:"#8b5cf6"}}/>,t:"Global Job Feeds",d:"Connect to live APIs and aggregate listings from multiple sources."},{i:<MessageSquare size={22} style={{color:"#ec4899"}}/>,t:"AI Apply Assistant",d:"Generate tailored cover letters, emails, and interview prep with GPT-4."}].map(f=>(
+          {[{i:<Zap size={22} style={{color:"var(--accent-600)"}}/>,t:"Smart Matching",d:"Hybrid SBERT + TF-IDF engine delivers precise compatibility scores in milliseconds."},{i:<FileText size={22} style={{color:"var(--info-500)"}}/>,t:"Resume Parsing",d:"Extract skills, education, and experience from PDF and DOCX automatically."},{i:<BarChart3 size={22} style={{color:"var(--warning-500)"}}/>,t:"Analytics",d:"Track match scores, pipelines, hiring velocity, and team performance."},{i:<Shield size={22} style={{color:"var(--danger-500)"}}/>,t:"Enterprise Security",d:"JWT auth, bcrypt hashing, and RBAC built-in for compliance."},{i:<Globe size={22} style={{color:"#8b5cf6"}}/>,t:"Global Job Feeds",d:"Connect to live APIs and aggregate listings from multiple sources."},{i:<MessageSquare size={22} style={{color:"#ec4899"}}/>,t:"AI Apply Assistant",d:"Generate tailored cover letters, emails, and interview prep with GPT-4."}].map(f=>(
             <div key={f.t} className="card" style={{padding:"1.75rem"}}>
               <div style={{width:"44px",height:"44px",background:"var(--primary-50)",borderRadius:"10px",display:"flex",alignItems:"center",justifyContent:"center",marginBottom:"1rem"}}>{f.i}</div>
               <h3 style={{fontSize:"1.05rem",fontWeight:700,marginBottom:"0.4rem"}}>{f.t}</h3>
@@ -96,7 +96,7 @@ export default function Home(){
           <p style={{color:"var(--text-muted)"}}>See why leading companies trust SmartHire AI.</p>
         </div>
         <div style={{display:"grid",gridTemplateColumns:"repeat(auto-fit,minmax(280px,1fr))",gap:"1.25rem"}}>
-          {[{q:"SmartHire AI reduced our time-to-hire from 45 days to 12 days. The matching is incredibly accurate.",a:"Sarah Chen",r:"VP of Talent, Acme Corp"},{q:"Resume parsing saved us hundreds of hours. We screen 5x more candidates with the same team.",a:"Marcus Johnson",r:"Head of Recruiting, Globex"},{q:"Enterprise security was non-negotiable. SmartHire delivered SSO and compliance out of the box.",a:"Elena Rodriguez",r:"CISO, Initech"}].map(t=>(
+          {[{q:"This tool cut our hiring time in half. The matching engine actually works.",a:"J. Miller",r:"Talent Lead, TechCorp"},{q:"Parsing resumes used to take forever. Now it is instant and accurate.",a:"A. Patel",r:"Recruiting Manager, NextGen"},{q:"Security requirements were strict and this passed every check we threw at it.",a:"R. Kim",r:"Engineering Director, CloudScale"}].map(t=>(
             <div key={t.a} className="card-elevated" style={{padding:"1.75rem"}}>
               <div style={{marginBottom:"1rem"}}>{[...Array(5)].map((_,i)=><Star key={i} size={14} style={{color:"var(--warning-500)",fill:"var(--warning-500)"}}/>)}</div>
               <p style={{fontSize:"0.95rem",lineHeight:1.7,marginBottom:"1.25rem",fontStyle:"italic"}}>&quot;{t.q}&quot;</p>

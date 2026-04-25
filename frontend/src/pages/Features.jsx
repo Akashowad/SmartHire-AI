@@ -4,7 +4,7 @@ import { Zap, FileText, MessageSquare, BarChart3, Shield, Globe, CheckCircle, Ar
 
 export default function Features(){
   const groups=[
-    {i:<Zap size={24} style={{color:"var(--accent-600)"}}/>,t:"AI-Powered Matching",d:"Our hybrid SBERT + TF-IDF engine delivers precise candidate-job compatibility scores.",p:["SBERT + TF-IDF hybrid","Real-time match scores","Skill gap analysis","ATS keyword detection"]},
+    {i:<Zap size={24} style={{color:"var(--accent-600)"}}/>,t:"Smart Matching",d:"Our hybrid SBERT + TF-IDF engine delivers precise candidate-job compatibility scores.",p:["SBERT + TF-IDF hybrid","Real-time match scores","Skill gap analysis","ATS keyword detection"]},
     {i:<FileText size={24} style={{color:"var(--info-500)"}}/>,t:"Resume Parsing",d:"Extract structured data from PDF and Word using spaCy NLP pipelines.",p:["PDF and DOCX support","Automated skill extraction","Education parsing","Multi-language support"]},
     {i:<MessageSquare size={24} style={{color:"#ec4899"}}/>,t:"AI Apply Assistant",d:"Generate professional application materials with GPT-4.",p:["Personalized cover letters","Recruiter email templates","Interview questions","Resume improvement tips"]},
     {i:<BarChart3 size={24} style={{color:"var(--warning-500)"}}/>,t:"Analytics",d:"Comprehensive dashboards for match scores, pipelines, and velocity.",p:["Match distribution","Funnel tracking","Team dashboards","Exportable reports"]},

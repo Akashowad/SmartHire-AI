@@ -14,7 +14,7 @@ export default function Contact(){
     <section style={{padding:"2rem 0 5rem",background:"#fff"}}>
       <div className="container" style={{display:"grid",gridTemplateColumns:"repeat(auto-fit,minmax(280px,1fr))",gap:"3rem",maxWidth:"900px"}}>
         <div className="flex-col" style={{gap:"1.5rem"}}>
-          {[{icon:<Mail size={20}/>,t:"Email",v:"hello@smarthire.ai"},{icon:<Phone size={20}/>,t:"Phone",v:"+1 (555) 123-4567"},{icon:<MapPin size={20}/>,t:"Office",v:"123 AI Drive, San Francisco, CA"}].map(i=>(
+          {[{icon:<Mail size={20}/>,t:"Email",v:"contact@smarthire.dev"},{icon:<Phone size={20}/>,t:"Phone",v:"See email for details"},{icon:<MapPin size={20}/>,t:"Location",v:"Remote-first team"}].map(i=>(
             <div key={i.t} className="card flex" style={{padding:"1.25rem",gap:"1rem",alignItems:"center"}}>
               <div style={{width:"40px",height:"40px",background:"var(--accent-50)",borderRadius:"10px",display:"flex",alignItems:"center",justifyContent:"center",color:"var(--accent-600)"}}>{i.icon}</div>
               <div><p style={{fontSize:"0.8rem",color:"var(--text-muted)",fontWeight:600,textTransform:"uppercase"}}>{i.t}</p><p style={{fontWeight:600}}>{i.v}</p></div>

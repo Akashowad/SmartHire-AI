@@ -60,7 +60,7 @@ export default function Footer() {
             </span>
           </Link>
           <p style={{ fontSize: '0.85rem', lineHeight: 1.6, color: 'var(--primary-400)', maxWidth: '260px' }}>
-            Enterprise-grade AI recruitment platform. Automate hiring, match candidates intelligently, and scale with confidence.
+            Recruitment software that parses resumes, scores matches, and helps you hire faster.
           </p>
           <div className="flex" style={{ gap: '0.75rem', marginTop: '1.25rem' }}>
             <a href="#" style={{ color: 'var(--primary-400)', transition: 'var(--transition-fast)' }} onMouseEnter={e => e.target.style.color = '#fff'} onMouseLeave={e => e.target.style.color = 'var(--primary-400)'}><Linkedin size={18} /></a>

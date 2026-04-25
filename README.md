@@ -1,26 +1,26 @@
 # SmartHire AI — Enterprise Recruitment Platform
 
-SmartHire AI is an enterprise-grade, AI-powered recruitment platform designed to help talent teams source, screen, and hire top candidates with unprecedented speed and accuracy. Built for modern organizations that demand intelligent automation without sacrificing human judgment.
+SmartHire is a recruitment tool that parses resumes, matches candidates to jobs, and helps teams hire faster. It uses NLP for resume extraction, semantic matching for scoring, and GPT for generating cover letters and interview prep.
 
 ---
 
 ## Overview
 
-SmartHire AI combines state-of-the-art natural language processing, semantic matching algorithms, and GPT-4 powered content generation to transform how companies identify and engage talent. From resume parsing to automated outreach, every step is optimized for scale, precision, and compliance.
+SmartHire reads resumes, scores how well candidates fit open roles, and generates application materials. The goal is to cut down the manual parts of recruiting so teams can focus on talking to the right people.
 
 ---
 
-## Core Capabilities
+## What It Does
 
 | Capability | Description |
 |------------|-------------|
-| **AI Resume Parsing** | Extract structured data from PDF and DOCX resumes using spaCy NLP pipelines |
-| **Semantic Matching** | Hybrid SBERT + TF-IDF scoring for precise candidate-job compatibility |
-| **Intelligent Job Aggregation** | Live remote job feeds with real-time filtering and categorization |
-| **AI Content Generation** | GPT-4 powered cover letters, recruiter emails, and interview prep |
-| **Automated Application** | Browser automation for high-volume application processing |
-| **Advanced Analytics** | Pipeline tracking, match score distributions, and hiring velocity metrics |
-| **Enterprise Security** | JWT authentication, bcrypt hashing, audit trails, RBAC |
+| **Resume Parsing** | Pull skills, education, and experience out of PDF and DOCX files using spaCy |
+| **Candidate Matching** | Compare resumes to job descriptions with SBERT + TF-IDF hybrid scoring |
+| **Job Feed** | Pull in live remote job listings with keyword and location filters |
+| **Content Generator** | Generate cover letters, recruiter emails, and interview questions with GPT |
+| **Auto-Apply** | Browser automation to speed up application submission |
+| **Analytics** | Track your pipeline, match scores, and hiring speed |
+| **Security** | JWT auth, bcrypt passwords, role-based access control |
 
 ---
 
@@ -45,13 +45,11 @@ SmartHire AI combines state-of-the-art natural language processing, semantic mat
 
 ### Data Flow
 
-1. **Candidate Upload** — Resumes (PDF/DOCX) are parsed via spaCy NLP
-2. **Skill Extraction** — Structured data: skills, education, experience, certifications
-3. **Job Feed** — Live listings aggregated from external sources
-4. **AI Matching** — Hybrid SBERT semantic + TF-IDF statistical scoring (0–100%)
-5. **Content Generation** — GPT-4 creates tailored cover letters, emails, interview questions
-6. **Application Tracking** — MongoDB persists all candidate interactions and pipeline status
-7. **Dashboard** — React frontend displays analytics, job feeds, and AI insights
+1. Upload a resume (PDF/DOCX) — it gets parsed for skills and experience
+2. Browse live job listings pulled from external sources
+3. See a match score for each candidate-job pair
+4. Generate cover letters, emails, and interview questions
+5. Track everything in a central dashboard
 
 ---
 
@@ -59,10 +57,10 @@ SmartHire AI combines state-of-the-art natural language processing, semantic mat
 
 | Layer | Technology |
 |-------|-----------|
-| **Frontend** | React 19, Vite, React Router DOM, Lucide React, CSS Custom Properties |
+| **Frontend** | React 19, Vite, React Router, Lucide icons |
 | **Backend** | FastAPI (Python), Service-Based Architecture, JWT Authentication |
 | **Database** | MongoDB with Motor (Async Driver) |
-| **AI/ML** | OpenAI GPT-4, spaCy (NLP), Sentence Transformers (SBERT), scikit-learn (TF-IDF) |
+| **AI/ML** | OpenAI GPT, spaCy, Sentence Transformers, scikit-learn |
 | **External APIs** | Remotive Public API |
 | **Security** | bcrypt password hashing, JWT tokens, HTTP Bearer authentication, CORS |
 
@@ -114,7 +112,7 @@ npm run dev
 
 ---
 
-## API Endpoints
+## API
 
 ### Authentication
 | Method | Endpoint | Description |
@@ -155,7 +153,7 @@ npm run dev
 
 ---
 
-## Project Structure
+## Structure
 
 ```
 smarthire-ai/
@@ -232,5 +230,5 @@ MIT License. Copyright (c) 2024 SmartHire AI, Inc.
 
 ---
 
-*Built for modern talent teams.*
+*Built to save recruiting time.*
 
