@@ -2,25 +2,30 @@ import uuid
 import logging
 from datetime import datetime
 from typing import List
-from fastapi import APIRouter, HTTPException
-from app.models.schemas import ApplicationSchema, ApplicationResponse
+from fastapi import APIRouter, HTTPException, Depends
+from app.models.schemas import ApplicationSchema, ApplicationResponse, UserInDB
 from app.services.ai_service import generate_cover_letter_service
 from app.services.job_service import fetch_recent_jobs
+from app.services.auth_service import get_current_user
 from app.utils.database import db
 
 logger = logging.getLogger(__name__)
 router = APIRouter()
 
 @router.post("/apply", response_model=ApplicationResponse)
-async def apply_to_job(resume_id: str, job_id: str):
+async def apply_to_job(
+    resume_id: str,
+    job_id: str,
+    current_user: UserInDB = Depends(get_current_user)
+):
     """Orchestrates the automated application process with AI tailoring."""
     resume = None
     if db.db is not None:
-        resume = await db.db["resumes"].find_one({"id": resume_id})
+        resume = await db.db["resumes"].find_one({"id": resume_id, "user_id": current_user.id})
     
     if not resume:
-        logger.warning(f"Resume {resume_id} not found for application. Using mock data.")
-        resume = {"text_content": "Experienced Developer profile.", "user_id": "user_mock"}
+        logger.warning(f"Resume {resume_id} not found for user {current_user.id}. Using mock data.")
+        resume = {"text_content": "Experienced Developer profile.", "user_id": current_user.id}
 
     try:
         all_jobs = fetch_recent_jobs()
@@ -38,7 +43,7 @@ async def apply_to_job(resume_id: str, job_id: str):
 
         application = ApplicationSchema(
             id=str(uuid.uuid4()),
-            user_id=resume.get("user_id", "user_1"),
+            user_id=current_user.id,
             job_id=job_id,
             resume_id=resume_id,
             applied_at=datetime.utcnow(),
@@ -62,13 +67,13 @@ async def apply_to_job(resume_id: str, job_id: str):
         raise HTTPException(status_code=500, detail="An error occurred during the application process.")
 
 @router.get("/", response_model=List[ApplicationSchema])
-async def get_applications(user_id: str = "user_1"):
-    """Retrieves application history for a user."""
+async def get_applications(current_user: UserInDB = Depends(get_current_user)):
+    """Retrieves application history for the authenticated user."""
     if db.db is None:
         return []
     
     try:
-        cursor = db.db["applications"].find({"user_id": user_id})
+        cursor = db.db["applications"].find({"user_id": current_user.id})
         return await cursor.to_list(length=100)
     except Exception as e:
         logger.error(f"Failed to fetch application history: {e}")

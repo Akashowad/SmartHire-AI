@@ -1,4 +1,4 @@
-from pydantic import BaseModel, ConfigDict
+from pydantic import BaseModel, ConfigDict, EmailStr
 from typing import List, Optional
 from datetime import datetime
 from bson import ObjectId
@@ -46,6 +46,51 @@ class CoverLetterResponse(BaseModel):
 class RecommendationResponse(BaseModel):
     why_matches: str
     skills_to_improve: List[str]
+
+class InterviewQuestions(BaseModel):
+    technical: List[str]
+    hr: List[str]
+    scenario: List[str]
+
+class AnalyzeRequest(BaseModel):
+    resume: str
+    job_description: str
+
+class AnalyzeResponse(BaseModel):
+    match_score: float
+    strengths: List[str]
+    missing_skills: List[str]
+    improvement_suggestions: List[str]
+    ats_keywords: List[str]
+    resume_feedback: List[str]
+    interview_questions: InterviewQuestions
+
+class UserCreate(BaseModel):
+    username: str
+    email: EmailStr
+    password: str
+
+class UserLogin(BaseModel):
+    username: str
+    password: str
+
+class UserInDB(BaseModel):
+    id: Optional[str] = None
+    username: str
+    email: str
+    hashed_password: str
+
+class UserResponse(BaseModel):
+    id: str
+    username: str
+    email: str
+
+class Token(BaseModel):
+    access_token: str
+    token_type: str
+
+class TokenData(BaseModel):
+    username: Optional[str] = None
 
 class ApplicationSchema(BaseModel):
     id: Optional[str] = None

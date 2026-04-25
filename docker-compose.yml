@@ -10,6 +10,8 @@ services:
       - MONGO_URI=mongodb://mongo:27017
       - DB_NAME=smarthire
       - OPENAI_API_KEY=${OPENAI_API_KEY}
+      - SECRET_KEY=${SECRET_KEY:-super-secret-key-change-in-production}
+      - ACCESS_TOKEN_EXPIRE_MINUTES=60
     depends_on:
       - mongo
     volumes:
@@ -21,7 +23,7 @@ services:
     ports:
       - "5173:5173"
     environment:
-      - VITE_API_URL=http://localhost:8000
+      - VITE_API_URL=http://localhost:8000/api
     depends_on:
       - backend
     volumes:
@@ -37,3 +39,4 @@ services:
 
 volumes:
   mongo_data:
+

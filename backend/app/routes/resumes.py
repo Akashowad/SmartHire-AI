@@ -1,8 +1,9 @@
 import uuid
 import logging
-from fastapi import APIRouter, File, UploadFile, HTTPException
+from fastapi import APIRouter, File, UploadFile, HTTPException, Depends
 from app.services.resume_service import extract_text_from_pdf, extract_text_from_docx, parse_resume
-from app.models.schemas import ResumeSchema
+from app.models.schemas import ResumeSchema, UserInDB
+from app.services.auth_service import get_current_user
 from app.utils.database import db
 
 logger = logging.getLogger(__name__)
@@ -14,7 +15,10 @@ ALLOWED_TYPES = {
 }
 
 @router.post("/upload-resume", response_model=ResumeSchema)
-async def upload_resume(file: UploadFile = File(...)):
+async def upload_resume(
+    file: UploadFile = File(...),
+    current_user: UserInDB = Depends(get_current_user)
+):
     """Handles resume upload, parsing, and storage with robust error handling."""
     file_type = ALLOWED_TYPES.get(file.content_type)
     if not file_type:
@@ -37,7 +41,7 @@ async def upload_resume(file: UploadFile = File(...)):
         
         resume = ResumeSchema(
             id=str(uuid.uuid4()),
-            user_id="user_1", # Mock user ID for now
+            user_id=current_user.id,
             original_filename=file.filename,
             text_content=text,
             extracted_skills=parsed_data.get("skills", []),
@@ -54,3 +58,17 @@ async def upload_resume(file: UploadFile = File(...)):
     except Exception as e:
         logger.error(f"Resume upload failed: {str(e)}")
         raise HTTPException(status_code=500, detail=f"Failed to process resume: {str(e)}")
+
+
+@router.get("/my-resumes", response_model=list[ResumeSchema])
+async def get_my_resumes(current_user: UserInDB = Depends(get_current_user)):
+    """Fetch all resumes for the authenticated user."""
+    if db.db is None:
+        return []
+    try:
+        cursor = db.db["resumes"].find({"user_id": current_user.id})
+        resumes = await cursor.to_list(length=100)
+        return resumes
+    except Exception as e:
+        logger.error(f"Failed to fetch resumes: {e}")
+        return []

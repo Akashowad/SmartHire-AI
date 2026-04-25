@@ -10,7 +10,7 @@ export const AppProvider = ({ children }) => {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
 
-  // Persistence: Load resume from localStorage on mount
+
   useEffect(() => {
     const savedResume = localStorage.getItem('smarthire_resume');
     if (savedResume) {
@@ -51,6 +51,14 @@ export const AppProvider = ({ children }) => {
     }
   };
 
+  const analyzeResume = async (resumeText, jobDescription) => {
+    const data = await apiClient('/ai/analyze', {
+      method: 'POST',
+      body: { resume: resumeText, job_description: jobDescription }
+    });
+    return data;
+  };
+
   return (
     <AppContext.Provider value={{
       jobs, setJobs,
@@ -58,7 +66,8 @@ export const AppProvider = ({ children }) => {
       applications, fetchApplications,
       loading, setLoading,
       error, setError,
-      fetchJobs
+      fetchJobs,
+      analyzeResume
     }}>
       {children}
     </AppContext.Provider>

@@ -1,28 +1,33 @@
 import uuid
 import logging
-from fastapi import APIRouter, HTTPException
+from fastapi import APIRouter, HTTPException, Depends
 from typing import List
-from app.models.schemas import MatchSchema
+from app.models.schemas import MatchSchema, UserInDB
 from app.services.matching_service import calculate_match, extract_missing_skills
 from app.services.job_service import fetch_recent_jobs
+from app.services.auth_service import get_current_user
 from app.utils.database import db
 
 logger = logging.getLogger(__name__)
 router = APIRouter()
 
 @router.post("/", response_model=MatchSchema)
-async def create_match(resume_id: str, job_id: str):
+async def create_match(
+    resume_id: str,
+    job_id: str,
+    current_user: UserInDB = Depends(get_current_user)
+):
     """Calculates compatibility between a resume and a job listing."""
     resume = None
     if db.db is not None:
-        resume = await db.db["resumes"].find_one({"id": resume_id})
+        resume = await db.db["resumes"].find_one({"id": resume_id, "user_id": current_user.id})
             
     if not resume:
-        logger.warning(f"Resume {resume_id} not found in DB. Falling back to mock data.")
+        logger.warning(f"Resume {resume_id} not found for user {current_user.id}. Falling back to mock data.")
         resume = {
            "text_content": "Experienced Developer in React and Python.",
            "extracted_skills": ["React", "Python"],
-           "user_id": "user_mock"
+           "user_id": current_user.id
         }
         
     try:
@@ -38,7 +43,7 @@ async def create_match(resume_id: str, job_id: str):
         
         match_record = MatchSchema(
             id=str(uuid.uuid4()),
-            user_id=resume.get("user_id", "user_1"),
+            user_id=current_user.id,
             resume_id=resume_id,
             job_id=job_id,
             match_percentage=match_percentage,
@@ -55,3 +60,16 @@ async def create_match(resume_id: str, job_id: str):
     except Exception as e:
         logger.error(f"Match calculation failed: {e}")
         raise HTTPException(status_code=500, detail="An internal error occurred during match calculation.")
+
+
+@router.get("/my-matches", response_model=List[MatchSchema])
+async def get_my_matches(current_user: UserInDB = Depends(get_current_user)):
+    """Fetch all match records for the authenticated user."""
+    if db.db is None:
+        return []
+    try:
+        cursor = db.db["matches"].find({"user_id": current_user.id})
+        return await cursor.to_list(length=100)
+    except Exception as e:
+        logger.error(f"Failed to fetch matches: {e}")
+        return []

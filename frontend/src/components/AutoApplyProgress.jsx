@@ -1,73 +1,38 @@
-import React, { useState, useEffect } from 'react';
+﻿import React, { useState, useEffect } from "react";
+import { CheckCircle, Loader2 } from "lucide-react";
 
-const STEPS = [
-  { id: 'profile', label: 'Analyzing Profile fit', icon: '👤' },
-  { id: 'tailor', label: 'Tailoring Application', icon: '🎯' },
-  { id: 'draft', label: 'Generating Cover Letter', icon: '📝' },
-  { id: 'submit', label: 'Submitting Application', icon: '🚀' }
+const STEPS=[
+  {id:"profile",label:"Analyzing profile fit",icon:"1"},
+  {id:"tailor",label:"Tailoring application",icon:"2"},
+  {id:"draft",label:"Generating cover letter",icon:"3"},
+  {id:"submit",label:"Submitting application",icon:"4"}
 ];
 
-export default function AutoApplyProgress({ job, onComplete }) {
-  const [currentStep, setCurrentStep] = useState(0);
-
-  useEffect(() => {
-    if (currentStep < STEPS.length) {
-      const timer = setTimeout(() => {
-        setCurrentStep(prev => prev + 1);
-      }, 1200);
-      return () => clearTimeout(timer);
-    } else {
-      onComplete();
-    }
-  }, [currentStep, onComplete]);
-
-  return (
-    <div className="flex-center" style={{
-      position: 'fixed', top: 0, left: 0, right: 0, bottom: 0,
-      background: 'rgba(0,0,0,0.7)', backdropFilter: 'blur(10px)',
-      zIndex: 2000, padding: '2rem'
-    }}>
-      <div className="glass-panel text-center" style={{ maxWidth: '500px', width: '100%', padding: '3rem' }}>
-        <h2 className="text-accent mb-2" style={{ fontSize: '1.8rem', fontWeight: 700 }}>AI Auto-Apply</h2>
-        <p className="text-secondary mb-4">Applying to <span style={{ color: 'var(--text-primary)', fontWeight: 600 }}>{job.title}</span> at {job.company}</p>
-
-        <div className="flex-col gap-3 text-left">
-          {STEPS.map((step, index) => {
-            const isCompleted = index < currentStep;
-            const isCurrent = index === currentStep;
-
-            return (
-              <div key={step.id} className="flex-between" style={{
-                opacity: isCompleted || isCurrent ? 1 : 0.4,
-                transition: 'all 0.3s ease',
-                padding: '0.8rem',
-                borderRadius: '12px',
-                background: isCurrent ? 'rgba(255,255,255,0.05)' : 'transparent',
-                border: isCurrent ? '1px solid rgba(255,255,255,0.1)' : '1px solid transparent'
-              }}>
-                <div className="flex-center gap-2">
-                  <span style={{ fontSize: '1.2rem' }}>{step.icon}</span>
-                  <span style={{ fontWeight: isCurrent ? 600 : 400, color: isCurrent ? 'var(--text-primary)' : 'var(--text-secondary)' }}>{step.label}</span>
-                </div>
-                {isCompleted ? (
-                  <span className="text-success" style={{ fontWeight: 'bold' }}>✓</span>
-                ) : isCurrent ? (
-                  <span className="spinner" style={{ width: '16px', height: '16px', borderTopColor: 'var(--accent)' }}></span>
-                ) : null}
-              </div>
-            );
-          })}
-        </div>
-
-        <div className="mt-4" style={{ height: '4px', background: 'rgba(255,255,255,0.1)', borderRadius: '2px', overflow: 'hidden' }}>
-            <div style={{ 
-                height: '100%', 
-                background: 'var(--accent-gradient)', 
-                width: `${(currentStep / STEPS.length) * 100}%`,
-                transition: 'width 0.4s ease'
-            }} />
-        </div>
+export default function AutoApplyProgress({job,onComplete}){
+  const [step,setStep]=useState(0);
+  useEffect(()=>{if(step<STEPS.length){const t=setTimeout(()=>setStep(s=>s+1),1200);return()=>clearTimeout(t);}else{onComplete?.();}},[step]);
+  return <div className="flex-center animate-fade-in" style={{position:"fixed",top:0,left:0,right:0,bottom:0,background:"rgba(15,23,42,0.5)",backdropFilter:"blur(8px)",zIndex:2000,padding:"2rem"}}>
+    <div className="card-elevated text-center" style={{maxWidth:"480px",width:"100%",padding:"3rem"}}>
+      <h2 style={{fontSize:"1.5rem",fontWeight:800,marginBottom:"0.5rem"}}>AI Auto-Apply</h2>
+      <p style={{color:"var(--text-muted)",marginBottom:"2rem"}}>Applying to <strong>{job.title}</strong> at {job.company}</p>
+      <div className="flex-col" style={{gap:"1rem",textAlign:"left"}}>
+        {STEPS.map((s,i)=>{
+          const done=i<step,curr=i===step;
+          return <div key={s.id} className="flex-between" style={{opacity:done||curr?1:0.4,transition:"all 0.3s ease",padding:"0.75rem 1rem",borderRadius:"var(--radius-sm)",background:curr?"var(--primary-50)":"transparent",border:curr?"1px solid var(--border-light)":"1px solid transparent"}}>
+            <span className="flex" style={{gap:"0.75rem",alignItems:"center"}}>
+              <span style={{width:"24px",height:"24px",borderRadius:"50%",background:done?"var(--accent-500)":curr?"var(--primary-900)":"var(--primary-200)",color:"#fff",display:"flex",alignItems:"center",justifyContent:"center",fontSize:"0.75rem",fontWeight:700}}>
+                {done?<CheckCircle size={14}/>:s.icon}
+              </span>
+              <span style={{fontWeight:curr?600:400,color:curr?"var(--text-heading)":"var(--text-muted)"}}>{s.label}</span>
+            </span>
+            {done&&<CheckCircle size={16} style={{color:"var(--accent-500)"}}/>}
+            {curr&&<Loader2 size={16} className="spinner" style={{width:"16px",height:"16px",border:"none",animation:"spin 1s linear infinite"}}/>}
+          </div>;
+        })}
+      </div>
+      <div style={{height:"4px",background:"var(--primary-100)",borderRadius:"2px",overflow:"hidden",marginTop:"1.5rem"}}>
+        <div style={{height:"100%",background:"var(--accent-500)",width:`${(step/STEPS.length)*100}%`,transition:"width 0.4s ease"}}/>
       </div>
     </div>
-  );
+  </div>;
 }

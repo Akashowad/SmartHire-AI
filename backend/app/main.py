@@ -17,13 +17,18 @@ logger = logging.getLogger(__name__)
 app = FastAPI(
     title=settings.PROJECT_NAME,
     version=settings.VERSION,
-    description="Refined Backend API for the SmartHire AI Job Assistant Agent"
+    description="Enterprise-grade API for AI-powered recruitment, candidate matching, resume parsing, and automated application processing. Built on FastAPI with MongoDB, OpenAI GPT, and SBERT semantic matching."
 )
 
 # CORS Configuration
+allowed_origins = settings.CORS_ORIGINS if settings.CORS_ORIGINS != ["*"] else [
+    "http://localhost:5173",
+    "http://127.0.0.1:5173",
+    "http://localhost:3000",
+]
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=settings.CORS_ORIGINS,
+    allow_origins=allowed_origins,
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
