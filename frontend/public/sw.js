@@ -1,4 +1,4 @@
-const CACHE_NAME = 'smarthire-v1';
+const CACHE_NAME = 'smarthire-v2';
 const STATIC_ASSETS = [
   './',
   './index.html',
@@ -36,7 +36,14 @@ self.addEventListener('fetch', (event) => {
     return;
   }
 
-  // Cache-first for static assets
+  if (request.mode === 'navigate') {
+    event.respondWith(
+      fetch(request).catch(() => caches.match('./index.html'))
+    );
+    return;
+  }
+
+  // Cache-first for non-navigation static assets
   event.respondWith(
     caches.match(request).then((cached) => {
       if (cached) return cached;

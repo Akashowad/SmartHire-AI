@@ -166,14 +166,15 @@ h1, h2, h3, h4, h5, h6 {
 }
 
 .btn-primary {
-  background: var(--accent-gradient);
-  color: #fff;
-  border-color: var(--primary-green-hover);
-  box-shadow: 0 10px 20px -12px rgba(22, 163, 74, 0.8);
+  background: linear-gradient(135deg, #22C55E 0%, #16A34A 100%) !important;
+  color: #FFFFFF !important;
+  border-color: #16A34A !important;
+  box-shadow: 0 12px 24px -12px rgba(22, 163, 74, 0.95);
 }
 .btn-primary:hover {
   transform: translateY(-1px);
-  box-shadow: 0 14px 26px -14px rgba(22, 163, 74, 0.9);
+  background: linear-gradient(135deg, #16A34A 0%, #15803D 100%) !important;
+  box-shadow: 0 16px 30px -14px rgba(22, 163, 74, 1);
 }
 .btn-primary:active {
   transform: translateY(0);
@@ -182,6 +183,11 @@ h1, h2, h3, h4, h5, h6 {
   opacity: 0.5;
   cursor: not-allowed;
   transform: none;
+}
+
+.btn-primary svg {
+  color: currentColor;
+  stroke: currentColor;
 }
 
 .btn-secondary {
