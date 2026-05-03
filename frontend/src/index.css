@@ -11,6 +11,12 @@
   --primary-green-hover: #16A34A;
   --primary-green-light: #4ADE80;
   --primary-dark: #0F172A;
+  --accent-primary: #22C55E;
+  --accent-primary-hover: #16A34A;
+  --accent-primary-glow: rgba(34, 197, 94, 0.18);
+  --accent-gradient: linear-gradient(135deg, #22C55E 0%, #16A34A 100%);
+  --accent: #22C55E;
+  --accent-light: #4ADE80;
 
   --success: #16A34A;
   --success-dim: rgba(34, 197, 94, 0.1);
@@ -28,14 +34,14 @@
 
 
 
-  --border-subtle: rgba(255, 255, 255, 0.06);
-  --border-light: rgba(255, 255, 255, 0.08);
-  --border-medium: rgba(255, 255, 255, 0.12);
+  --border-subtle: rgba(15, 23, 42, 0.08);
+  --border-light: rgba(15, 23, 42, 0.12);
+  --border-medium: rgba(15, 23, 42, 0.18);
 
-  --shadow-sm: 0 1px 2px 0 rgba(0, 0, 0, 0.3);
-  --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.4), 0 2px 4px -2px rgba(0, 0, 0, 0.2);
-  --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.5), 0 4px 6px -4px rgba(0, 0, 0, 0.3);
-  --shadow-glow: 0 0 40px -10px rgba(99, 102, 241, 0.3);
+  --shadow-sm: 0 1px 2px 0 rgba(15, 23, 42, 0.06);
+  --shadow-md: 0 8px 18px -10px rgba(15, 23, 42, 0.22), 0 2px 6px -4px rgba(15, 23, 42, 0.16);
+  --shadow-lg: 0 18px 36px -22px rgba(15, 23, 42, 0.28), 0 8px 14px -12px rgba(15, 23, 42, 0.18);
+  --shadow-glow: 0 0 40px -14px rgba(34, 197, 94, 0.42);
 
   --radius-sm: 8px;
   --radius-md: 12px;
@@ -162,11 +168,12 @@ h1, h2, h3, h4, h5, h6 {
 .btn-primary {
   background: var(--accent-gradient);
   color: #fff;
-  box-shadow: 0 4px 14px 0 rgba(99, 102, 241, 0.35);
+  border-color: var(--primary-green-hover);
+  box-shadow: 0 10px 20px -12px rgba(22, 163, 74, 0.8);
 }
 .btn-primary:hover {
   transform: translateY(-1px);
-  box-shadow: 0 6px 20px 0 rgba(99, 102, 241, 0.45);
+  box-shadow: 0 14px 26px -14px rgba(22, 163, 74, 0.9);
 }
 .btn-primary:active {
   transform: translateY(0);
@@ -181,6 +188,7 @@ h1, h2, h3, h4, h5, h6 {
   background: var(--bg-surface-elevated);
   color: var(--text-primary);
   border-color: var(--border-light);
+  box-shadow: var(--shadow-sm);
 }
 .btn-secondary:hover {
   background: var(--bg-hover);

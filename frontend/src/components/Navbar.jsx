@@ -23,7 +23,7 @@ export default function Navbar() {
       position: 'sticky',
       top: 0,
       zIndex: 100,
-background: var(--bg-surface),
+      background: 'var(--bg-surface)',
       borderBottom: '1px solid var(--border-light)',
     }}>
       <div className="container flex-between" style={{ height: '68px' }}>
@@ -56,13 +56,13 @@ background: var(--bg-surface),
               to={link.to}
               style={{
                 textDecoration: 'none',
-                color: isActive(link.to) ? '#fff' : 'var(--text-secondary)',
+                color: isActive(link.to) ? 'var(--primary-green-hover)' : 'var(--text-secondary)',
                 fontWeight: isActive(link.to) ? 600 : 500,
                 fontSize: '0.9rem',
                 transition: 'var(--transition-fast)',
                 position: 'relative',
               }}
-              onMouseEnter={e => { if (!isActive(link.to)) e.target.style.color = '#fff'; }}
+              onMouseEnter={e => { if (!isActive(link.to)) e.target.style.color = 'var(--primary-dark)'; }}
               onMouseLeave={e => { if (!isActive(link.to)) e.target.style.color = 'var(--text-secondary)'; }}
             >
               {link.label}
@@ -102,7 +102,7 @@ background: var(--bg-surface),
         <button
           className="hide-desktop"
           onClick={() => setMobileOpen(!mobileOpen)}
-          style={{ background: 'none', border: 'none', cursor: 'pointer', color: '#fff', display: 'none' }}
+          style={{ background: 'none', border: 'none', cursor: 'pointer', color: 'var(--primary-dark)', display: 'none' }}
         >
           {mobileOpen ? <X size={24} /> : <Menu size={24} />}
         </button>
@@ -122,7 +122,7 @@ background: var(--bg-surface),
               onClick={() => setMobileOpen(false)}
               style={{
                 textDecoration: 'none',
-                color: isActive(link.to) ? '#fff' : 'var(--text-secondary)',
+                color: isActive(link.to) ? 'var(--primary-green-hover)' : 'var(--text-secondary)',
                 fontWeight: 600,
                 fontSize: '1rem',
               }}
