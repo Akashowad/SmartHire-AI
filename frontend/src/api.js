@@ -5,6 +5,154 @@ import { calculateMatchScore } from './utils/matchingEngine';
 const MOCK_DELAY = 400;
 const wait = (ms) => new Promise(resolve => setTimeout(resolve, ms));
 
+const daysAgo = (days) => new Date(Date.now() - days * 86400000).toISOString();
+
+const INDIAN_OPPORTUNITIES = [
+  {
+    id: 'india-tcs-software-engineer',
+    title: 'Software Engineer',
+    company: 'Tata Consultancy Services',
+    location: 'India Remote - Bengaluru, Pune, Chennai',
+    job_type: 'Full-time',
+    salary: '₹8L - ₹18L',
+    salary_min: 800000,
+    salary_max: 1800000,
+    source: 'SmartHire India',
+    source_region: 'India',
+    description: 'Build scalable enterprise web applications using React, Node.js, Python, SQL, cloud services, APIs, and agile engineering practices.',
+    apply_url: 'https://www.tcs.com/careers',
+    tags: ['React', 'Node.js', 'Python', 'SQL', 'AWS', 'India'],
+    publication_date: daysAgo(1),
+  },
+  {
+    id: 'india-infosys-react-developer',
+    title: 'React Frontend Developer',
+    company: 'Infosys',
+    location: 'India Remote - Hyderabad, Bengaluru, Mysuru',
+    job_type: 'Full-time',
+    salary: '₹7L - ₹16L',
+    salary_min: 700000,
+    salary_max: 1600000,
+    source: 'SmartHire India',
+    source_region: 'India',
+    description: 'Create accessible, high-performance React interfaces with TypeScript, REST APIs, reusable components, testing, and modern frontend tooling.',
+    apply_url: 'https://www.infosys.com/careers/',
+    tags: ['React', 'TypeScript', 'JavaScript', 'Frontend', 'India'],
+    publication_date: daysAgo(2),
+  },
+  {
+    id: 'india-wipro-python-backend',
+    title: 'Python Backend Engineer',
+    company: 'Wipro',
+    location: 'India Hybrid - Bengaluru, Chennai, Noida',
+    job_type: 'Full-time',
+    salary: '₹9L - ₹20L',
+    salary_min: 900000,
+    salary_max: 2000000,
+    source: 'SmartHire India',
+    source_region: 'India',
+    description: 'Develop backend services with Python, FastAPI, PostgreSQL, Docker, cloud deployment, monitoring, and secure API integrations.',
+    apply_url: 'https://careers.wipro.com/',
+    tags: ['Python', 'FastAPI', 'PostgreSQL', 'Docker', 'AWS', 'India'],
+    publication_date: daysAgo(1),
+  },
+  {
+    id: 'india-zoho-fullstack',
+    title: 'Full Stack Developer',
+    company: 'Zoho',
+    location: 'India On-site/Hybrid - Chennai',
+    job_type: 'Full-time',
+    salary: '₹10L - ₹24L',
+    salary_min: 1000000,
+    salary_max: 2400000,
+    source: 'SmartHire India',
+    source_region: 'India',
+    description: 'Own product features across frontend and backend using JavaScript, React, Node.js, databases, APIs, debugging, and product-minded engineering.',
+    apply_url: 'https://www.zoho.com/careers/',
+    tags: ['React', 'Node.js', 'JavaScript', 'SQL', 'Product', 'India'],
+    publication_date: daysAgo(3),
+  },
+  {
+    id: 'india-freshworks-devops',
+    title: 'DevOps Engineer',
+    company: 'Freshworks',
+    location: 'India Hybrid - Chennai, Bengaluru, Hyderabad',
+    job_type: 'Full-time',
+    salary: '₹12L - ₹28L',
+    salary_min: 1200000,
+    salary_max: 2800000,
+    source: 'SmartHire India',
+    source_region: 'India',
+    description: 'Improve cloud reliability with AWS, Docker, Kubernetes, CI/CD, observability, incident response, automation, and production operations.',
+    apply_url: 'https://www.freshworks.com/company/careers/',
+    tags: ['AWS', 'Docker', 'Kubernetes', 'DevOps', 'CI/CD', 'India'],
+    publication_date: daysAgo(2),
+  },
+  {
+    id: 'india-razorpay-data-analyst',
+    title: 'Data Analyst',
+    company: 'Razorpay',
+    location: 'India Hybrid - Bengaluru',
+    job_type: 'Full-time',
+    salary: '₹8L - ₹22L',
+    salary_min: 800000,
+    salary_max: 2200000,
+    source: 'SmartHire India',
+    source_region: 'India',
+    description: 'Analyze product and business data using SQL, dashboards, experimentation, metrics, stakeholder communication, and analytical storytelling.',
+    apply_url: 'https://razorpay.com/jobs/',
+    tags: ['SQL', 'Analytics', 'Data', 'Communication', 'India'],
+    publication_date: daysAgo(1),
+  },
+  {
+    id: 'india-swiggy-software-engineer',
+    title: 'Software Development Engineer',
+    company: 'Swiggy',
+    location: 'India Hybrid - Bengaluru',
+    job_type: 'Full-time',
+    salary: '₹14L - ₹35L',
+    salary_min: 1400000,
+    salary_max: 3500000,
+    source: 'SmartHire India',
+    source_region: 'India',
+    description: 'Build high-scale consumer systems using backend services, APIs, distributed systems, cloud infrastructure, databases, and product engineering.',
+    apply_url: 'https://careers.swiggy.com/',
+    tags: ['Software Engineer', 'Node.js', 'Python', 'AWS', 'SQL', 'India'],
+    publication_date: daysAgo(2),
+  },
+  {
+    id: 'india-meesho-frontend',
+    title: 'Frontend Engineer',
+    company: 'Meesho',
+    location: 'India Remote/Hybrid - Bengaluru',
+    job_type: 'Full-time',
+    salary: '₹12L - ₹30L',
+    salary_min: 1200000,
+    salary_max: 3000000,
+    source: 'SmartHire India',
+    source_region: 'India',
+    description: 'Ship fast, polished React experiences for ecommerce workflows with TypeScript, performance optimization, design systems, and experimentation.',
+    apply_url: 'https://www.meesho.io/jobs',
+    tags: ['React', 'TypeScript', 'Frontend', 'Performance', 'India'],
+    publication_date: daysAgo(1),
+  },
+];
+
+function getIndianOpportunities(keyword = '', location = '') {
+  const terms = `${keyword} ${location}`.toLowerCase().split(/\s+/).filter(Boolean);
+  const genericTerms = new Set(['india', 'remote', 'job', 'jobs', 'role', 'roles', 'opportunity', 'opportunities']);
+
+  return INDIAN_OPPORTUNITIES.filter((job) => {
+    const haystack = `${job.title} ${job.company} ${job.location} ${job.description} ${job.tags.join(' ')}`.toLowerCase();
+    const searchableTerms = terms.filter((term) => !genericTerms.has(term));
+    return searchableTerms.length === 0 || searchableTerms.some((term) => haystack.includes(term));
+  }).map((job) => ({
+    ...job,
+    company_logo: null,
+    excerpt: job.description.slice(0, 200) + (job.description.length > 200 ? '...' : ''),
+  }));
+}
+
 // ─── Real Job API Fetchers ───
 
 async function fetchRemotiveJobs(keyword = '', limit = 50) {
@@ -172,6 +320,10 @@ async function fetchRealJobs(keyword = '', location = '', filters = {}) {
     else console.warn('Job source failed:', r.reason);
   }
 
+  if (isIndiaSearch) {
+    allJobs = allJobs.concat(getIndianOpportunities(keyword, location));
+  }
+
   if (allJobs.length === 0 && results.every(r => r.status === 'rejected')) {
     throw new Error('All job sources failed. Please check your internet connection.');
   }
@@ -179,6 +331,7 @@ async function fetchRealJobs(keyword = '', location = '', filters = {}) {
   if (location) {
     const loc = location.toLowerCase();
     allJobs = allJobs.filter(j =>
+      (loc === 'india' && j.source_region === 'India') ||
       j.location.toLowerCase().includes(loc) ||
       j.title.toLowerCase().includes(loc) ||
       j.tags.some(t => t.toLowerCase().includes(loc))
@@ -192,10 +345,12 @@ async function fetchRealJobs(keyword = '', location = '', filters = {}) {
   if (filters.minSalary) {
     allJobs = allJobs.filter(j => {
       if (!j.salary) return true;
+      if (j.salary_max) return Number(j.salary_max) >= filters.minSalary;
+      if (j.salary_min) return Number(j.salary_min) >= filters.minSalary;
       const nums = j.salary.match(/\d+/g);
       if (!nums) return true;
-      const min = Math.min(...nums.map(n => parseInt(n)));
-      return min >= filters.minSalary;
+      const max = Math.max(...nums.map(n => parseInt(n, 10)));
+      return max >= filters.minSalary;
     });
   }
 
@@ -255,6 +410,7 @@ export const apiClient = async (endpoint, options = {}) => {
     const filters = {};
     if (url.searchParams.has('jobType')) filters.jobType = url.searchParams.get('jobType');
     if (url.searchParams.has('datePosted')) filters.datePosted = url.searchParams.get('datePosted');
+    if (url.searchParams.has('minSalary')) filters.minSalary = Number(url.searchParams.get('minSalary'));
     const jobs = await fetchRealJobs(keyword, location, filters);
     localStorage.setItem('smarthire_jobs', JSON.stringify(jobs));
     return jobs;

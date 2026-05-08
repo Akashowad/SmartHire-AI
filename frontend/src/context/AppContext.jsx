@@ -28,11 +28,18 @@ export const AppProvider = ({ children }) => {
     localStorage.removeItem('smarthire_resume');
   };
 
-  const fetchJobs = async (keyword = '', location = '') => {
+  const fetchJobs = async (keyword = '', location = '', filters = {}) => {
     setLoading(true);
     setError(null);
     try {
-      const data = await apiClient(`/jobs/?keyword=${keyword}&location=${location}`);
+      const params = new URLSearchParams();
+      if (keyword) params.set('keyword', keyword);
+      if (location) params.set('location', location);
+      if (filters.jobType) params.set('jobType', filters.jobType);
+      if (filters.datePosted) params.set('datePosted', filters.datePosted);
+      if (filters.minSalary) params.set('minSalary', filters.minSalary);
+
+      const data = await apiClient(`/jobs/?${params.toString()}`);
       setJobs(data);
     } catch (err) {
       setError('Failed to fetch jobs. Please try again.');

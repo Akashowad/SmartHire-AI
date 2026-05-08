@@ -1,6 +1,44 @@
 import React, { useState, useEffect } from 'react';
 import { apiClient } from '../api';
 
+const extractKeywords = (text = '') => {
+  const keywords = [
+    'React', 'JavaScript', 'Python', 'FastAPI', 'MongoDB', 'SQL', 'AWS',
+    'Docker', 'Kubernetes', 'SEO', 'content', 'writing', 'copywriting',
+    'communication', 'analytics', 'marketing', 'remote', 'operations'
+  ];
+
+  return keywords.filter((keyword) =>
+    text.toLowerCase().includes(keyword.toLowerCase())
+  );
+};
+
+const buildFallbackAIData = (job, resumeText = '') => {
+  const jobText = `${job.title || ''}\n${job.description || ''}`;
+  const resumeSkills = extractKeywords(resumeText);
+  const jobSkills = extractKeywords(jobText);
+  const matched = resumeSkills.filter((skill) =>
+    jobSkills.some((jobSkill) => jobSkill.toLowerCase() === skill.toLowerCase())
+  );
+  const missing = jobSkills.filter((skill) =>
+    !resumeSkills.some((resumeSkill) => resumeSkill.toLowerCase() === skill.toLowerCase())
+  );
+  const role = job.title || 'this role';
+  const company = job.company || 'your team';
+  const strengths = matched.length ? matched.slice(0, 4).join(', ') : 'adaptability, communication, and relevant project experience';
+
+  return {
+    recommendations: {
+      why_matches: `Your profile can be positioned well for ${role} at ${company}. Highlight ${strengths}, then connect your experience directly to the responsibilities in the job description.`,
+      skills_to_improve: missing.slice(0, 5),
+    },
+    coverLetter: {
+      cover_letter: `Dear Hiring Manager,\n\nI am excited to apply for the ${role} position at ${company}. My background in ${strengths} gives me a strong foundation to contribute to this role.\n\nI am especially interested in this opportunity because the role calls for clear execution, ownership, and the ability to adapt quickly. I would bring a practical, detail-oriented approach and a strong willingness to learn the tools and workflows your team uses.\n\nThank you for considering my application. I would welcome the opportunity to discuss how my experience can support ${company}'s goals.\n\nSincerely,\nApplicant`,
+      email_template: `Subject: Application for ${role}\n\nHi Hiring Team,\n\nI hope you are doing well. I recently came across the ${role} opening at ${company} and wanted to share my interest.\n\nMy experience includes ${strengths}, and I am confident I can bring value to the team. I have attached my resume for your review and would appreciate the opportunity to discuss the role further.\n\nBest regards,\nApplicant`,
+    },
+  };
+};
+
 export default function ApplicationAssistant({ job, resumeText, onClose }) {
   const [loading, setLoading] = useState(true);
   const [aiData, setAiData] = useState(null);
@@ -17,6 +55,7 @@ export default function ApplicationAssistant({ job, resumeText, onClose }) {
         setAiData({ recommendations: recData, coverLetter: coverData });
       } catch (err) {
         console.error("AI error", err);
+        setAiData(buildFallbackAIData(job, resumeText));
       } finally {
         setLoading(false);
       }

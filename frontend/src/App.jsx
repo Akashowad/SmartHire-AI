@@ -1,4 +1,5 @@
 import React from 'react';
+import { Analytics } from "@vercel/analytics/react";
 import { Routes, Route } from 'react-router-dom';
 import { AuthProvider } from './context/AuthContext';
 import { AppProvider } from './context/AppContext';
@@ -30,6 +31,7 @@ function App() {
           <Route path="/bookmarks" element={<Layout><Bookmarks /></Layout>} />
           <Route path="*" element={<Layout><Home /></Layout>} />
         </Routes>
+        <Analytics />
       </AppProvider>
     </AuthProvider>
   );
