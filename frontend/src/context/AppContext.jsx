@@ -1,5 +1,5 @@
 import React, { createContext, useContext, useState, useEffect } from 'react';
-import { apiClient } from '../api';
+import { apiClient, MOCK_JOBS } from '../api';
 
 const AppContext = createContext();
 
@@ -42,8 +42,17 @@ export const AppProvider = ({ children }) => {
       const data = await apiClient(`/jobs/?${params.toString()}`);
       setJobs(data);
     } catch (err) {
-      setError('Failed to fetch jobs. Please try again.');
-      console.error(err);
+      console.warn('Backend unavailable, using mock data:', err);
+      // Fallback to mock data
+      const filteredJobs = MOCK_JOBS.filter(job => {
+        const matchesKeyword = !keyword || job.title.toLowerCase().includes(keyword.toLowerCase()) || job.tags.some(tag => tag.toLowerCase().includes(keyword.toLowerCase()));
+        const matchesLocation = !location || job.location.toLowerCase().includes(location.toLowerCase());
+        const matchesJobType = !filters.jobType || job.job_type?.toLowerCase() === filters.jobType.toLowerCase();
+        const matchesMinSalary = !filters.minSalary || (job.salary_max && job.salary_max >= filters.minSalary);
+        return matchesKeyword && matchesLocation && matchesJobType && matchesMinSalary;
+      });
+      setJobs(filteredJobs);
+      setError('Using offline data - backend unavailable');
     } finally {
       setLoading(false);
     }

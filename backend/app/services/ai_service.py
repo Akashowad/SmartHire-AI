@@ -1,5 +1,6 @@
 import os
 import logging
+import asyncio
 from openai import AsyncOpenAI
 from app.models.schemas import CoverLetterRequest, CoverLetterResponse, RecommendationResponse
 from app.core.config import settings
@@ -27,16 +28,25 @@ async def generate_cover_letter_service(resume_text: str, job_description: str) 
     """
     
     try:
-        response = await client.chat.completions.create(
-            model="gpt-3.5-turbo",
-            messages=[{"role": "system", "content": prompt}]
-        )
-        content = response.choices[0].message.content
-        parts = content.split('---EMAIL_TEMPLATE---')
-        return CoverLetterResponse(
-            cover_letter=parts[0].strip(),
-            email_template=parts[1].strip() if len(parts) > 1 else ""
-        )
+        for attempt in range(3):
+            try:
+                response = await client.chat.completions.create(
+                    model="gpt-3.5-turbo",
+                    messages=[{"role": "system", "content": prompt}]
+                )
+                content = response.choices[0].message.content
+                parts = content.split('---EMAIL_TEMPLATE---')
+                return CoverLetterResponse(
+                    cover_letter=parts[0].strip(),
+                    email_template=parts[1].strip() if len(parts) > 1 else ""
+                )
+            except Exception as e:
+                if attempt < 2:
+                    logger.warning(f"OpenAI attempt {attempt + 1} failed: {e}. Retrying...")
+                    await asyncio.sleep(1)
+                else:
+                    logger.error(f"OpenAI failed after 3 attempts: {e}")
+                    raise e
     except Exception as e:
         logger.error(f"OpenAI Error (Cover Letter): {e}")
         raise e
@@ -52,18 +62,27 @@ async def generate_recommendations_service(resume_text: str, job_description: st
     prompt = f"Resume: {resume_text}\nJob: {job_description}\nWhy matches? List exactly 3 skills to improve. Format: Why: <text>\nImprove: s1, s2, s3"
     
     try:
-        response = await client.chat.completions.create(
-            model="gpt-3.5-turbo",
-            messages=[{"role": "system", "content": prompt}]
-        )
-        content = response.choices[0].message.content
-        why_text = "Analysis complete."
-        skills = []
-        for line in content.split('\n'):
-            if "Why:" in line: why_text = line.split("Why:")[1].strip()
-            if "Improve:" in line: skills = [s.strip() for s in line.split("Improve:")[1].split(",")]
-        
-        return RecommendationResponse(why_matches=why_text, skills_to_improve=skills)
+        for attempt in range(3):
+            try:
+                response = await client.chat.completions.create(
+                    model="gpt-3.5-turbo",
+                    messages=[{"role": "system", "content": prompt}]
+                )
+                content = response.choices[0].message.content
+                why_text = "Analysis complete."
+                skills = []
+                for line in content.split('\n'):
+                    if "Why:" in line: why_text = line.split("Why:")[1].strip()
+                    if "Improve:" in line: skills = [s.strip() for s in line.split("Improve:")[1].split(",")]
+                
+                return RecommendationResponse(why_matches=why_text, skills_to_improve=skills)
+            except Exception as e:
+                if attempt < 2:
+                    logger.warning(f"OpenAI attempt {attempt + 1} failed: {e}. Retrying...")
+                    await asyncio.sleep(1)
+                else:
+                    logger.error(f"OpenAI failed after 3 attempts: {e}")
+                    raise e
     except Exception as e:
         logger.error(f"OpenAI Error (Recommendations): {e}")
         raise e

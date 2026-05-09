@@ -11,11 +11,13 @@ class JobSchema(BaseModel):
     description: str
     excerpt: Optional[str] = ""
     location: str
-    posting_date: str
+    publication_date: str
     skills_required: List[str]
     apply_url: Optional[str] = ""
     category: Optional[str] = ""
     salary: Optional[str] = ""
+    source: Optional[str] = "Remotive"
+    source_region: Optional[str] = "Global"
 
 class ResumeSchema(BaseModel):
     id: Optional[str] = None
@@ -46,6 +48,27 @@ class CoverLetterResponse(BaseModel):
 class RecommendationResponse(BaseModel):
     why_matches: str
     skills_to_improve: List[str]
+
+class UserSchema(BaseModel):
+    id: Optional[str] = None
+    username: str
+    email: str
+    hashed_password: str
+    created_at: datetime = datetime.utcnow()
+
+class LoginRequest(BaseModel):
+    username: str
+    password: str
+
+class SignupRequest(BaseModel):
+    username: str
+    email: str
+    password: str
+
+class TokenResponse(BaseModel):
+    access_token: str
+    token_type: str = "bearer"
+    user: dict
 
 class ApplicationSchema(BaseModel):
     id: Optional[str] = None

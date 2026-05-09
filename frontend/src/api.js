@@ -6,6 +6,7 @@ const MOCK_DELAY = 400;
 const wait = (ms) => new Promise(resolve => setTimeout(resolve, ms));
 
 const daysAgo = (days) => new Date(Date.now() - days * 86400000).toISOString();
+const BASE_URL = import.meta.env.VITE_API_URL || 'http://localhost:8000/api';
 
 const INDIAN_OPPORTUNITIES = [
   {
@@ -137,6 +138,8 @@ const INDIAN_OPPORTUNITIES = [
     publication_date: daysAgo(1),
   },
 ];
+
+export const MOCK_JOBS = INDIAN_OPPORTUNITIES;
 
 function getIndianOpportunities(keyword = '', location = '') {
   const terms = `${keyword} ${location}`.toLowerCase().split(/\s+/).filter(Boolean);
@@ -381,7 +384,6 @@ async function fetchRealJobs(keyword = '', location = '', filters = {}) {
 // ─── Mock API Client ───
 
 export const apiClient = async (endpoint, options = {}) => {
-  await wait(MOCK_DELAY);
   const token = localStorage.getItem('smarthire_token');
 
   if (endpoint === '/auth/login') {
@@ -403,173 +405,37 @@ export const apiClient = async (endpoint, options = {}) => {
     return { username: 'demouser', email: 'demo@smarthire.ai', id: 'user-1' };
   }
 
-  if (endpoint.startsWith('/jobs/')) {
-    const url = new URL('http://localhost' + endpoint);
-    const keyword = url.searchParams.get('keyword') || '';
-    const location = url.searchParams.get('location') || '';
-    const filters = {};
-    if (url.searchParams.has('jobType')) filters.jobType = url.searchParams.get('jobType');
-    if (url.searchParams.has('datePosted')) filters.datePosted = url.searchParams.get('datePosted');
-    if (url.searchParams.has('minSalary')) filters.minSalary = Number(url.searchParams.get('minSalary'));
-    const jobs = await fetchRealJobs(keyword, location, filters);
-    localStorage.setItem('smarthire_jobs', JSON.stringify(jobs));
-    return jobs;
+  const url = endpoint.startsWith('http') ? endpoint : `${BASE_URL}${endpoint}`;
+  const headers = {
+    ...options.headers,
+  };
+
+  if (token) {
+    headers.Authorization = `Bearer ${token}`;
   }
 
-  if (endpoint === '/resumes/upload-resume') {
-    const formData = options.body;
-    const file = formData instanceof FormData ? formData.get('file') : null;
-
-    if (file && file.size > 0) {
-      try {
-        const textContent = await extractTextFromFile(file);
-        const extracted_skills = detectSkills(textContent);
-        const education = detectEducation(textContent);
-        const experience_years = detectExperienceYears(textContent);
-
-        return {
-          id: 'resume-' + Date.now(),
-          original_filename: file.name,
-          text_content: textContent,
-          extracted_skills,
-          education,
-          experience_years,
-        };
-      } catch (err) {
-        console.error('Resume parsing error:', err);
-      }
-    }
-
-    return {
-      id: 'resume-' + Date.now(),
-      original_filename: file ? file.name : 'resume.pdf',
-      text_content: "Experienced software engineer with 6 years of experience in full-stack development.\n\nSkills: React, TypeScript, Node.js, Python, PostgreSQL, AWS, Docker, Kubernetes, GraphQL, REST APIs, CI/CD, Agile methodologies.\n\nEducation: B.Tech in Computer Science, IIT Bombay (2018).\n\nExperience:\n- Senior Engineer at TechCorp (2021-Present): Built microservices serving 10M+ users.\n- Full Stack Developer at StartupX (2018-2021): Led product development from 0 to 1.",
-      extracted_skills: ["React", "TypeScript", "Node.js", "Python", "PostgreSQL", "AWS", "Docker", "Kubernetes", "GraphQL"],
-      education: ["B.Tech Computer Science, IIT Bombay"],
-      experience_years: 6
-    };
+  let body = options.body;
+  if (body && !(body instanceof FormData)) {
+    headers['Content-Type'] = 'application/json';
+    body = JSON.stringify(body);
   }
 
-  if (endpoint.startsWith('/matches/')) {
-    const url = new URL('http://localhost' + endpoint);
-    const jobId = url.searchParams.get('job_id') || '';
-    const resumeId = url.searchParams.get('resume_id') || '';
+  const response = await fetch(url, {
+    method: options.method || (body ? 'POST' : 'GET'),
+    headers,
+    body,
+  });
 
-    const savedResume = localStorage.getItem('smarthire_resume');
-    let resumeData = null;
-    if (savedResume) {
-      try { resumeData = JSON.parse(savedResume); } catch (e) {}
-    }
-
-    if (!resumeData) {
-      resumeData = {
-        id: resumeId,
-        extracted_skills: ["React", "TypeScript", "Node.js", "Python", "PostgreSQL", "AWS"],
-        text_content: "Software engineer with React, TypeScript, Node.js, Python, PostgreSQL, AWS experience.",
-        experience_years: 6,
-      };
-    }
-
-    const storedJobs = JSON.parse(localStorage.getItem('smarthire_jobs') || '[]');
-    const job = storedJobs.find(j => j.id === jobId);
-
-    if (job) {
-      return calculateMatchScore(resumeData, job);
-    }
-
-    let hash = 0;
-    for (let i = 0; i < jobId.length; i++) { hash = ((hash << 5) - hash) + jobId.charCodeAt(i); hash |= 0; }
-    return { match_percentage: 45 + (Math.abs(hash) % 54) };
+  if (!response.ok) {
+    const errorText = await response.text();
+    throw new Error(`API request failed (${response.status}): ${errorText}`);
   }
 
-  if (endpoint === '/applications/') {
-    const saved = localStorage.getItem('smarthire_applications');
-    return saved ? JSON.parse(saved) : [];
+  if (response.status === 204 || response.headers.get('Content-Length') === '0') {
+    return null;
   }
 
-  if (endpoint.startsWith('/applications/apply')) {
-    const url = new URL('http://localhost' + endpoint);
-    const jobId = url.searchParams.get('job_id');
-    const saved = localStorage.getItem('smarthire_applications');
-    const apps = saved ? JSON.parse(saved) : [];
-    if (!apps.some(a => a.job_id === jobId)) {
-      apps.push({
-        job_id: jobId,
-        applied_at: new Date().toISOString(),
-        status: 'applied'
-      });
-      localStorage.setItem('smarthire_applications', JSON.stringify(apps));
-    }
-    return { success: true };
-  }
-
-  if (endpoint === '/ai/analyze') {
-    const body = options.body || {};
-    const resumeText = body.resume || '';
-    const jobDesc = body.job_description || '';
-    const resumeSkills = detectSkills(resumeText);
-    const jobSkills = detectSkills(jobDesc);
-    const matched = resumeSkills.filter(s => jobSkills.some(js => js.toLowerCase() === s.toLowerCase()));
-    const missing = jobSkills.filter(s => !resumeSkills.some(rs => rs.toLowerCase() === s.toLowerCase()));
-
-    return {
-      match_score: Math.round((matched.length / Math.max(jobSkills.length, 1)) * 100),
-      strengths: matched.slice(0, 5).map(s => `Strong experience with ${s}`),
-      missing_skills: missing.slice(0, 5),
-      improvement_suggestions: [
-        'Add quantified impact metrics to your resume',
-        'Include links to relevant projects or portfolio',
-        'Consider obtaining certifications in key missing skills',
-        'Tailor your resume keywords for each job application',
-      ],
-      ats_keywords: jobSkills.slice(0, 8),
-      interview_questions: {
-        technical: [
-          'Describe a challenging technical problem you solved recently',
-          'How do you approach debugging complex issues?',
-          'Explain your experience with system design at scale',
-        ],
-        hr: [
-          'Tell us about a time you had to learn something quickly',
-          'How do you handle conflicting priorities?',
-          'Describe your ideal work environment',
-        ],
-        scenario: [
-          'A critical bug is found in production on Friday evening. What do you do?',
-          'Your team disagrees on the technical approach. How do you resolve it?',
-        ],
-      }
-    };
-  }
-
-  if (endpoint === '/ai/recommendations') {
-    const body = options.body || {};
-    const resumeSkills = detectSkills(body.resume_text || '');
-    const jobSkills = detectSkills(body.job_description || '');
-    const matched = resumeSkills.filter(s => jobSkills.some(js => js.toLowerCase() === s.toLowerCase()));
-    const missing = jobSkills.filter(s => !resumeSkills.some(rs => rs.toLowerCase() === s.toLowerCase()));
-
-    return {
-      why_matches: `Your profile shows expertise in ${matched.slice(0, 4).join(', ') || 'relevant technologies'} which aligns well with this role. ${matched.length >= 4 ? 'This is a strong match for the position requirements.' : 'Consider highlighting more relevant skills in your resume.'}`,
-      skills_to_improve: missing.slice(0, 5),
-    };
-  }
-
-  if (endpoint === '/ai/cover-letter') {
-    const body = options.body || {};
-    const jobDesc = body.job_description || '';
-    const resumeText = body.resume_text || '';
-    const resumeSkills = detectSkills(resumeText);
-    const jobTitle = jobDesc.split('\n')[0].slice(0, 60) || 'this position';
-
-    return {
-      cover_letter: `Dear Hiring Manager,\n\nI am writing to express my strong interest in ${jobTitle}. With my background in ${resumeSkills.slice(0, 4).join(', ')}, I am confident in my ability to contribute meaningfully to your team.\n\nMy experience includes building scalable applications, collaborating with cross-functional teams, and continuously learning new technologies. I am particularly drawn to this opportunity because it aligns with my passion for impactful software development.\n\nThank you for considering my application. I would welcome the opportunity to discuss how my background aligns with your team's goals.\n\nSincerely,\nApplicant`,
-      email_template: `Subject: Application for ${jobTitle}\n\nHi Hiring Team,\n\nI hope this email finds you well. I am a software engineer with expertise in ${resumeSkills.slice(0, 4).join(', ')}.\n\nI recently came across ${jobTitle} and was immediately excited by the opportunity to contribute to your organization.\n\nKey highlights of my background:\n• ${resumeSkills.slice(0, 3).join('\n• ')}\n\nI would love the opportunity to discuss how I can contribute to your team's continued growth.\n\nBest regards,\nApplicant`,
-    };
-  }
-
-  console.warn('Mock API: unhandled endpoint', endpoint);
-  return {};
+  return await response.json();
 };
 
 export const login = async (username, password) => {

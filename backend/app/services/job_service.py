@@ -57,11 +57,13 @@ def _transform_remotive_job(job: dict) -> dict:
         "description": _clean_html(job.get("description", "")),
         "excerpt": _clean_html(job.get("description", ""))[:300] + "...",
         "location": job.get("candidate_required_location") or "Worldwide",
-        "posting_date": pub_date,
+        "publication_date": pub_date,
         "skills_required": skills,
         "apply_url": job.get("url", ""),
         "category": job.get("category", ""),
         "salary": job.get("salary", ""),
+        "source": "Remotive",
+        "source_region": "Global",
     }
 
 def _clean_html(html_text: str) -> str:

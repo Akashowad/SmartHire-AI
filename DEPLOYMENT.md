@@ -9,6 +9,18 @@ Use this file to keep the public deployment URLs for project submissions, portfo
 
 Replace the Render URL after the backend is deployed.
 
+## Local Development
+
+1. Backend
+   - `cd backend`
+   - `venv\Scripts\python.exe -m uvicorn app.main:app --reload --host 0.0.0.0 --port 8000`
+   - Open `http://127.0.0.1:8000/`
+2. Frontend
+   - `cd frontend`
+   - `npm install`
+   - `npm run dev -- --host 0.0.0.0 --port 5173`
+   - Open `http://localhost:5173/`
+
 ## Vercel Frontend
 
 1. Open your Vercel dashboard.

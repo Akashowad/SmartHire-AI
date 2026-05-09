@@ -4,9 +4,11 @@ from app.routes.jobs import router as jobs_router
 from app.routes.matches import router as matches_router
 from app.routes.ai import router as ai_router
 from app.routes.applications import router as applications_router
+from app.routes.auth import router as auth_router
 
 api_router = APIRouter()
 
+api_router.include_router(auth_router, prefix="/auth", tags=["Authentication"])
 api_router.include_router(resumes_router, prefix="/resumes", tags=["Resumes"])
 api_router.include_router(jobs_router, prefix="/jobs", tags=["Jobs"])
 api_router.include_router(matches_router, prefix="/matches", tags=["Matches"])
