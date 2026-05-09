@@ -1,17 +1,21 @@
 import pdfplumber
 import docx
-import spacy
 import io
 import logging
 from typing import Dict, List, Optional
 
 logger = logging.getLogger(__name__)
 
-# Load the spaCy model for Named Entity Recognition
+nlp = None
 try:
-    nlp = spacy.load("en_core_web_sm")
-except OSError:
-    logger.warning("spaCy model 'en_core_web_sm' not found. NLP extraction will be limited.")
+    import spacy
+    try:
+        nlp = spacy.load("en_core_web_sm")
+    except OSError:
+        logger.warning("spaCy model 'en_core_web_sm' not found. NLP extraction will be limited.")
+        nlp = None
+except Exception as e:
+    logger.warning(f"spaCy unavailable: {e}. Resume NLP extraction will be disabled.")
     nlp = None
 
 COMMON_SKILLS = [

@@ -20,6 +20,11 @@ class Settings(BaseSettings):
     SECRET_KEY: str = os.getenv("SECRET_KEY", "your-secret-key-here-change-in-production")
     OPENAI_API_KEY: str = os.getenv("OPENAI_API_KEY", "")
     
+    # Job API Keys
+    JSEARCH_API_KEY: str = os.getenv("JSEARCH_API_KEY", "")
+    ADZUNA_APP_ID: str = os.getenv("ADZUNA_APP_ID", "")
+    ADZUNA_APP_KEY: str = os.getenv("ADZUNA_APP_KEY", "")
+    
     # CORS
     CORS_ORIGINS: List[str] = os.getenv("CORS_ORIGINS", "*").split(",")
 
