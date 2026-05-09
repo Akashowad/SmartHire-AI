@@ -9,6 +9,25 @@ Use this file to keep the public deployment URLs for project submissions, portfo
 
 Replace the Render URL after the backend is deployed.
 
+## Environment Variables Required
+
+### Backend (Render)
+```env
+MONGO_URI=your_mongodb_connection_string
+DB_NAME=smarthire
+SECRET_KEY=your_generated_secret_key
+OPENAI_API_KEY=your_openai_api_key
+JSEARCH_API_KEY=your_jsearch_rapidapi_key
+ADZUNA_APP_ID=your_adzuna_app_id
+ADZUNA_APP_KEY=your_adzuna_app_key
+CORS_ORIGINS=https://smarthire-ai.vercel.app
+```
+
+### Frontend (Vercel)
+```env
+VITE_API_URL=https://your-backend.onrender.com/api
+```
+
 ## Local Development
 
 1. Backend
@@ -21,28 +40,40 @@ Replace the Render URL after the backend is deployed.
    - `npm run dev -- --host 0.0.0.0 --port 5173`
    - Open `http://localhost:5173/`
 
-## Vercel Frontend
+## Vercel Frontend Deployment
 
-1. Open your Vercel dashboard.
-2. Open the SmartHire AI project.
-3. Copy the production domain, for example `https://smarthire-ai.vercel.app`.
-4. If the backend is deployed, add this environment variable in Vercel:
+1. Connect your GitHub repository to Vercel
+2. Set the root directory to `frontend`
+3. Add environment variable:
+   ```
+   VITE_API_URL=https://your-backend.onrender.com/api
+   ```
+4. Deploy
 
-```env
-VITE_API_URL=https://your-backend.onrender.com/api
-```
+## Render Backend Deployment
 
-5. Redeploy the frontend after changing environment variables.
+1. Create a new Web Service from your GitHub repo
+2. Set the root directory to `backend`
+3. Add all the backend environment variables listed above
+4. Set build command: `pip install -r requirements.txt`
+5. Set start command: `uvicorn app.main:app --host 0.0.0.0 --port $PORT`
+6. Deploy
 
-## Render Backend
+## API Keys Setup
 
-1. Create a new Render Web Service for the `backend` folder.
-2. Add environment variables such as `OPENAI_API_KEY`, `MONGO_URI`, `DB_NAME`, and `CORS_ORIGINS`.
-3. Set `CORS_ORIGINS` to your Vercel URL:
+### JSearch API (RapidAPI)
+1. Sign up at [RapidAPI JSearch](https://rapidapi.com/letscrape-6bRBa3QguO5/api/jsearch)
+2. Subscribe to the API
+3. Copy your API key
 
-```env
-CORS_ORIGINS=https://smarthire-ai.vercel.app
-```
+### Adzuna API
+1. Sign up at [Adzuna Developer](https://developer.adzuna.com/)
+2. Create an app to get App ID and App Key
 
-4. Copy the Render service URL, for example `https://your-backend.onrender.com`.
+### MongoDB
+1. Create a MongoDB Atlas cluster
+2. Get your connection string
+
+### OpenAI
+1. Get your API key from OpenAI dashboard
 
